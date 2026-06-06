@@ -15,7 +15,7 @@ $stmt->execute([$user_id]);
 $orders = $stmt->fetchAll();
 
 // Get Custom Requests
-$stmt = $pdo->prepare("SELECT * FROM custom_requests WHERE user_id = ? ORDER BY created_at DESC");
+$stmt = $pdo->prepare("SELECT * FROM custom_orders WHERE user_id = ? ORDER BY created_at DESC");
 $stmt->execute([$user_id]);
 $requests = $stmt->fetchAll();
 ?>
