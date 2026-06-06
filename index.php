@@ -59,7 +59,7 @@ include 'includes/db.php';
                         <i class="fas fa-heart"></i> Handmade with Love
                     </div>
                     <h1 class="display-3 fw-bold mb-4 font-serif text-dark">
-                        Thoughtful Gifts for <span class="text-gradient">Every Occasion</span>
+                        Thoughtful Gifts, <span class="text-gradient">Handcrafted</span> with Love
                     </h1>
                     <p class="lead text-secondary mb-5">
                         Unique handcrafted gifts designed to create lasting memories. Explore our collection or request a custom design tailored just for you.
@@ -75,7 +75,7 @@ include 'includes/db.php';
                 </div>
                 <div class="col-lg-6 fade-up" style="transition-delay: 0.2s;">
                     <div class="hero-img-wrap">
-                        <img src="https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&q=80&w=800" alt="Handmade Gift" class="hero-img">
+                        <img src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&q=80&w=800" alt="Handmade Gift" class="hero-img">
                     </div>
                 </div>
             </div>

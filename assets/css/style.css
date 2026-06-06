@@ -15,11 +15,12 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: var(--background);
+    background: linear-gradient(135deg, var(--background) 0%, #FFF0ED 100%);
     color: var(--text);
     line-height: 1.6;
     overflow-x: hidden;
     scroll-behavior: smooth;
+    min-height: 100vh;
 }
 
 h1, h2, h3, h4, h5, h6, .font-serif {
@@ -43,11 +44,11 @@ a {
 
 .glass-nav {
     position: sticky;
-    top: 1rem;
+    top: 0.5rem;
     z-index: 1000;
     border-radius: 50px;
     margin: 0 5%;
-    padding: 0.5rem 2rem;
+    padding: 0.3rem 2rem;
     transition: all 0.3s ease;
 }
 
@@ -115,8 +116,11 @@ a {
 
 /* Hero Section */
 .hero-section {
-    padding: 6rem 0;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
     position: relative;
+    padding: 2rem 0;
 }
 
 .hero-img-wrap {
