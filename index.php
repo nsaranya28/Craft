@@ -119,6 +119,26 @@ include 'includes/db.php';
         </div>
     </section>
 
+    <!-- Statistics Section -->
+    <section class="section-padding" style="background: rgba(255, 255, 255, 0.5); border-top: 1px solid rgba(139, 92, 246, 0.1); border-bottom: 1px solid rgba(139, 92, 246, 0.1);">
+        <div class="container">
+            <div class="row text-center g-4">
+                <div class="col-md-4 fade-up">
+                    <h3 class="display-4 font-serif text-primary mb-2">10K+</h3>
+                    <p class="text-secondary fw-medium fs-5">Happy Customers</p>
+                </div>
+                <div class="col-md-4 fade-up" style="transition-delay: 0.2s;">
+                    <h3 class="display-4 font-serif text-primary mb-2">500+</h3>
+                    <p class="text-secondary fw-medium fs-5">Unique Designs</p>
+                </div>
+                <div class="col-md-4 fade-up" style="transition-delay: 0.4s;">
+                    <h3 class="display-4 font-serif text-primary mb-2">100%</h3>
+                    <p class="text-secondary fw-medium fs-5">Handmade with Love</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Why Choose Us -->
     <section class="section-padding" id="about">
         <div class="container">
@@ -230,6 +250,26 @@ include 'includes/db.php';
                         <h6 class="font-serif fw-bold mb-0">- Emily R.</h6>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Instagram Gallery -->
+    <section class="section-padding overflow-hidden">
+        <div class="container-fluid px-4">
+            <div class="section-title fade-up mb-4">
+                <h2>Follow Us @CraftyGifts</h2>
+                <p>Share your beautiful moments using #CraftyGiftsLove</p>
+            </div>
+            <div class="d-flex justify-content-center w-100 fade-up" style="gap: 15px; flex-wrap: wrap;">
+                <img src="https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&q=80&w=400" alt="Insta 1" style="width: 18vw; min-width: 150px; aspect-ratio: 1; object-fit: cover; border-radius: 20px; box-shadow: var(--shadow-soft); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=400" alt="Insta 2" style="width: 18vw; min-width: 150px; aspect-ratio: 1; object-fit: cover; border-radius: 20px; box-shadow: var(--shadow-soft); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <img src="https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&q=80&w=400" alt="Insta 3" style="width: 18vw; min-width: 150px; aspect-ratio: 1; object-fit: cover; border-radius: 20px; box-shadow: var(--shadow-soft); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <img src="https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&q=80&w=400" alt="Insta 4" style="width: 18vw; min-width: 150px; aspect-ratio: 1; object-fit: cover; border-radius: 20px; box-shadow: var(--shadow-soft); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <img src="https://images.unsplash.com/photo-1574633944818-a8325b48d516?auto=format&fit=crop&q=80&w=400" alt="Insta 5" style="width: 18vw; min-width: 150px; aspect-ratio: 1; object-fit: cover; border-radius: 20px; box-shadow: var(--shadow-soft); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            </div>
+            <div class="text-center mt-5 fade-up">
+                <a href="#" class="btn btn-outline-custom"><i class="fab fa-instagram me-2"></i> View on Instagram</a>
             </div>
         </div>
     </section>

@@ -5,12 +5,20 @@
     --secondary: #EC4899;
     --background: #FFF7F5;
     --text: #1F2937;
-    --text-light: #6B7280;
+    --text-light: #9d8ba7;
     --white: #FFFFFF;
     --glass-bg: rgba(255, 255, 255, 0.85);
     --glass-border: rgba(255, 255, 255, 0.4);
     --shadow-soft: 0 10px 40px -10px rgba(139, 92, 246, 0.1);
     --shadow-hover: 0 20px 40px -10px rgba(139, 92, 246, 0.2);
+}
+
+/* Override Bootstrap Text Colors */
+.text-secondary {
+    color: var(--text-light) !important;
+}
+.text-dark {
+    color: var(--text) !important;
 }
 
 body {
