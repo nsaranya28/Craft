@@ -9,7 +9,7 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Read schema.sql
-    $sql = file_get_contents('schema.sql');
+    $sql = "DROP DATABASE IF EXISTS custom_craft_db;\n" . file_get_contents('schema.sql');
     
     // Execute SQL
     $pdo->exec($sql);
