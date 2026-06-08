@@ -7,7 +7,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 }
 
 // Stats
-$userCount = $pdo->query("SELECT COUNT(*) FROM users WHERE role='user'")->fetchColumn();
+$userCount = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
 $orderCount = $pdo->query("SELECT COUNT(*) FROM orders")->fetchColumn();
 $requestCount = $pdo->query("SELECT COUNT(*) FROM custom_orders")->fetchColumn();
 $revenue = $pdo->query("SELECT SUM(total_amount) FROM orders WHERE payment_status='paid'")->fetchColumn() ?: 0;
