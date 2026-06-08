@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     try {
-        $stmt = $pdo->prepare("INSERT INTO custom_requests (user_id, title, description, image_path) VALUES (?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO custom_orders (user_id, title, description, image_path) VALUES (?, ?, ?, ?)");
         $stmt->execute([$user_id, $title, $description, $image_path]);
         $success = "Your custom request has been submitted! Our craftsmen will review it and provide a quote shortly.";
     } catch (PDOException $e) {
