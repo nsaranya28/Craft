@@ -1,0 +1,114 @@
+/* admin/assets/css/admin.css */
+/* Luxury pastel pink & lavender theme – glassmorphism */
+:root {
+    --primary-pink: hsl(340, 70%, 88%); /* soft pink */
+    --secondary-lavender: hsl(260, 55%, 90%);
+    --accent-purple: hsl(285, 60%, 80%);
+    --text-dark: hsl(210, 10%, 20%);
+    --text-light: hsl(210, 10%, 95%);
+    --bg-glass: rgba(255, 255, 255, 0.25);
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+body {
+    background: linear-gradient(135deg, var(--primary-pink), var(--secondary-lavender));
+    color: var(--text-dark);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+}
+
+/* Glass card */
+.glass-card {
+    backdrop-filter: blur(12px);
+    background: var(--bg-glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-soft);
+    padding: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* Sidebar */
+#admin-sidebar {
+    width: 260px;
+    background: var(--bg-glass);
+    border-right: 1px solid var(--glass-border);
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    overflow-y: auto;
+    padding-top: 2rem;
+}
+#admin-sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.8rem 1.5rem;
+    color: var(--text-dark);
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+}
+#admin-sidebar a:hover, #admin-sidebar a.active {
+    background: var(--primary-pink);
+    color: white;
+    border-radius: 8px;
+}
+
+/* Header */
+#admin-header {
+    height: 64px;
+    background: var(--bg-glass);
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    margin-left: 260px; /* offset sidebar */
+    position: sticky;
+    top: 0; z-index: 10;
+}
+
+/* Dashboard widgets */
+.widget {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+}
+.widget .value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-purple);
+}
+.widget .label {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+/* Floating hearts animation */
+@keyframes floatHeart {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-150px) scale(1.4); opacity: 0; }
+}
+.heart {
+    position: absolute;
+    width: 24px; height: 24px;
+    background: url('../img/heart.svg') no-repeat center / contain;
+    animation: floatHeart 4s linear infinite;
+}
+
+/* Dark mode toggle */
+[data-theme='dark'] {
+    --primary-pink: hsl(340, 30%, 20%);
+    --secondary-lavender: hsl(260, 20%, 25%);
+    --bg-glass: rgba(0,0,0,0.35);
+    --text-light: hsl(210, 10%, 95%);
+    --text-dark: hsl(210, 10%, 10%);
+    background: #111;
+    color: var(--text-light);
+}
