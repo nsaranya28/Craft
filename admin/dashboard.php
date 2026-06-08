@@ -63,9 +63,9 @@ $recentOrders = $pdo->query("SELECT o.*, u.name as user_name FROM orders o JOIN 
             <aside class="card admin-nav">
                 <ul>
                     <li><a href="#" class="active">Overview</a></li>
-                    <li><a href="#">Manage Products</a></li>
+                    <li><a href="create_product.php" class="">Manage Products</a></li>
                     <li><a href="#">Categories</a></li>
-                    <li><a href="#">Orders</a></li>
+                    <li><a href="create_order.php" class="">Create Order</a></li>
                     <li><a href="#">Custom Requests</a></li>
                     <li><a href="#">Users</a></li>
                     <li><a href="#">Reports</a></li>
