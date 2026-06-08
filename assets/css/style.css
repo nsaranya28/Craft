@@ -1,16 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 :root {
-    --primary: #8B5CF6;
-    --secondary: #EC4899;
-    --background: #FFF7F5;
+    --primary: #ff5c8a; /* hot pink */
+    --secondary: #ff9ab2; /* light pink */
+    --background: #ffe4e1; /* misty rose */
     --text: #1F2937;
     --text-light: #9d8ba7;
     --white: #FFFFFF;
     --glass-bg: rgba(255, 255, 255, 0.85);
     --glass-border: rgba(255, 255, 255, 0.4);
-    --shadow-soft: 0 10px 40px -10px rgba(139, 92, 246, 0.1);
-    --shadow-hover: 0 20px 40px -10px rgba(139, 92, 246, 0.2);
+    --shadow-soft: 0 10px 40px -10px rgba(255, 92, 138, 0.1);
+    --shadow-hover: 0 20px 40px -10px rgba(255, 92, 138, 0.2);
 }
 
 /* Override Bootstrap Text Colors */
