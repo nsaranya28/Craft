@@ -14,12 +14,9 @@ try {
     // Execute SQL
     $pdo->exec($sql);
     
-    // Automatically seed products, categories, users, and admins
-    include 'seed.php';
-    
     echo "<div style='font-family: sans-serif; padding: 2rem; background: #ecfdf5; color: #065f46; border: 1px solid #10b981; border-radius: 0.5rem;'>";
     echo "<h2>Success!</h2>";
-    echo "<p>Database 'custom_craft_db' has been created, tables are initialized, and default products have been seeded successfully.</p>";
+    echo "<p>Database 'custom_craft_db' has been created and tables are initialized.</p>";
     echo "<p><a href='index.php' style='color: #059669; font-weight: bold;'>Go to Homepage</a></p>";
     echo "</div>";
 
