@@ -112,7 +112,7 @@ $recentOrders = $pdo->query("SELECT o.*, u.name as user_name FROM orders o JOIN 
                             <tr style="border-bottom: 1px solid #f1f5f9;">
                                 <td style="padding: 1rem;"><?php echo $ro['user_name']; ?></td>
                                 <td style="padding: 1rem;">$<?php echo $ro['total_amount']; ?></td>
-                                <td style="padding: 1rem;"><span style="padding: 0.2rem 0.6rem; border-radius: 1rem; background: #e0e7ff; color: #4338ca; font-size: 0.8rem;"><?php echo $ro['status']; ?></span></td>
+                                <td style="padding: 1rem;"><span style="padding: 0.2rem 0.6rem; border-radius: 1rem; background: #ffe0ed; color: #E8628C; font-size: 0.8rem;"><?php echo $ro['status']; ?></span></td>
                                 <td style="padding: 1rem;"><?php echo date('M d', strtotime($ro['order_date'])); ?></td>
                                 <td style="padding: 1rem;"><a href="#" class="text-gradient">Edit</a></td>
                             </tr>

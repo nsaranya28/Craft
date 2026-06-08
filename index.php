@@ -17,12 +17,12 @@ include 'includes/db.php';
 </head>
 <body>
 
-    <!-- Glass Navbar -->
+    <!-- Navbar brand with cute ribbon -->
     <nav class="navbar navbar-expand-lg glass-nav">
         <div class="container-fluid">
-            <a class="navbar-brand font-serif fs-4 fw-bold text-gradient" href="index.php">CraftyGifts</a>
+            <a class="navbar-brand font-serif fs-4 fw-bold text-gradient" href="index.php">CraftyGifts <span style="font-size: 1rem;">🎀</span> <span style="font-size: 0.8rem; color: var(--primary-light);">♡</span></a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <i class="fas fa-bars"></i>
+                <i class="fas fa-bars" style="color: var(--primary);"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
@@ -45,37 +45,66 @@ include 'includes/db.php';
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section overflow-hidden">
-        <!-- Cute Doodles -->
-        <span class="doodle" style="top: 10%; left: 5%;">✨</span>
-        <span class="doodle" style="top: 20%; right: 10%; font-size: 3rem;">💖</span>
-        <span class="doodle" style="bottom: 10%; left: 40%; font-size: 2.5rem;">🌟</span>
-        <span class="doodle" style="top: 60%; right: 5%;">🎀</span>
+    <section class="hero-section">
+        <!-- Floating Hearts & Sparkles -->
+        <span class="doodle doodle-heart" style="top: 8%; left: 4%; font-size: 1.8rem; animation-delay: 0s;">♡</span>
+        <span class="doodle doodle-heart" style="top: 35%; left: 2%; font-size: 1.2rem; animation-delay: 1s; animation-name: pulse-soft;">♡</span>
+        <span class="doodle doodle-sparkle" style="top: 15%; left: 35%; animation-delay: 0.5s; animation-name: twinkle;">✦</span>
+        <span class="doodle doodle-heart" style="top: 18%; right: 35%; font-size: 2rem; animation-delay: 2s;">♡</span>
+        <span class="doodle doodle-sparkle" style="top: 45%; left: 45%; font-size: 0.8rem; animation-delay: 1.5s; animation-name: twinkle;">✦</span>
+        <span class="doodle doodle-heart" style="bottom: 25%; left: 15%; font-size: 1rem; animation-delay: 3s; animation-name: pulse-soft;">♡</span>
+        <span class="doodle doodle-sparkle" style="top: 60%; right: 40%; font-size: 0.7rem; animation-delay: 2.5s; animation-name: twinkle;">✧</span>
+        <span class="doodle doodle-heart" style="top: 25%; right: 8%; font-size: 1.5rem; animation-delay: 0.8s;">♡</span>
+        <span class="doodle" style="top: 5%; right: 12%; font-size: 2.5rem; animation-delay: 0.3s; animation-name: float-reverse;">🎀</span>
         
-        <div class="container">
+        <div class="container" style="position: relative; z-index: 3;">
             <div class="row align-items-center g-5">
                 <div class="col-lg-6 fade-up">
                     <div class="badge-custom">
                         <i class="fas fa-heart"></i> Handmade with Love
                     </div>
                     <h1 class="display-3 fw-bold mb-4 font-serif text-dark">
-                        Thoughtful Gifts, <span class="text-gradient">Handcrafted</span> with Love
+                        Thoughtful Gifts, <span class="text-gradient">Handcrafted</span> with Love <span style="font-size: 1.5rem; color: var(--primary-light);">♡</span>
                     </h1>
-                    <p class="lead text-secondary mb-5">
-                        Unique handcrafted gifts designed to create lasting memories. Explore our collection or request a custom design tailored just for you.
+                    <p class="lead text-secondary mb-4" style="font-size: 1.05rem;">
+                        <span style="color: var(--primary);">♥</span> Unique handcrafted gifts designed to create lasting memories. Explore our collection or request a custom design tailored just for you.
                     </p>
-                    <div class="d-flex flex-wrap gap-3">
+                    <div class="d-flex flex-wrap gap-3 mb-4">
                         <a href="products.php" class="btn btn-primary-custom btn-lg">
                             Shop Collection <i class="fas fa-arrow-right ms-2"></i>
                         </a>
                         <a href="#custom" class="btn btn-outline-custom btn-lg">
-                            Custom Order
+                            Custom Order <span style="margin-left: 4px;">♡</span>
                         </a>
                     </div>
+                    
+                    <!-- Feature Highlights -->
+                    <div class="feature-highlights">
+                        <div class="feature-highlight-item">
+                            <div class="feature-highlight-icon"><i class="fas fa-heart"></i></div>
+                            <div><small class="fw-medium">Handmade<br>with Care</small></div>
+                        </div>
+                        <div class="feature-highlight-item">
+                            <div class="feature-highlight-icon"><i class="fas fa-gift"></i></div>
+                            <div><small class="fw-medium">Unique &<br>Meaningful</small></div>
+                        </div>
+                        <div class="feature-highlight-item">
+                            <div class="feature-highlight-icon"><i class="fas fa-leaf"></i></div>
+                            <div><small class="fw-medium">Sustainable<br>& Thoughtful</small></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-lg-6 fade-up" style="transition-delay: 0.2s;">
+                <div class="col-lg-6 fade-up" style="transition-delay: 0.2s; position: relative;">
                     <div class="hero-img-wrap">
                         <img src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&q=80&w=800" alt="Handmade Gift" class="hero-img">
+                    </div>
+                    <!-- Sticker Note -->
+                    <div class="sticker-note d-none d-lg-block" style="bottom: -10px; right: -10px; transform: rotate(3deg);">
+                        made with<br>love <span style="color: var(--primary);">♡</span>
+                    </div>
+                    <!-- Cloud Bubble -->
+                    <div class="cloud-bubble d-none d-lg-block" style="bottom: -40px; right: 30%; width: 160px; height: 100px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+                        <span>✧ Because every gift<br>tells a story <span style="color: var(--primary);">♡</span></span>
                     </div>
                 </div>
             </div>
@@ -120,7 +149,7 @@ include 'includes/db.php';
     </section>
 
     <!-- Statistics Section -->
-    <section class="section-padding" style="background: rgba(255, 255, 255, 0.5); border-top: 1px solid rgba(139, 92, 246, 0.1); border-bottom: 1px solid rgba(139, 92, 246, 0.1);">
+    <section class="section-padding stats-section">
         <div class="container">
             <div class="row text-center g-4">
                 <div class="col-md-4 fade-up">

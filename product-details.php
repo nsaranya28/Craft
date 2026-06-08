@@ -58,7 +58,7 @@ if(!$product) die('Product not found');
         }
         .option-item.active {
             border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.05);
+            background: rgba(232, 98, 140, 0.06);
             color: var(--primary);
             font-weight: 600;
         }

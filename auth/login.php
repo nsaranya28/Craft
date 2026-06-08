@@ -34,15 +34,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="../assets/css/style.css">
     <style>
         .auth-bg {
-            background: linear-gradient(135deg, var(--background) 0%, #FFF0ED 100%);
+            background: linear-gradient(135deg, var(--background) 0%, var(--pink-50) 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
+            position: relative;
+        }
+        .auth-bg::before {
+            content: '♡';
+            position: absolute;
+            top: 10%;
+            left: 8%;
+            font-size: 2rem;
+            color: var(--primary-light);
+            opacity: 0.3;
+            animation: float 6s ease-in-out infinite;
+        }
+        .auth-bg::after {
+            content: '♡';
+            position: absolute;
+            bottom: 15%;
+            right: 10%;
+            font-size: 1.5rem;
+            color: var(--primary-light);
+            opacity: 0.25;
+            animation: float 5s ease-in-out infinite 1s;
         }
         .auth-card {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            border: 1.5px solid rgba(232, 98, 140, 0.12);
             border-radius: 30px;
             box-shadow: var(--shadow-soft);
             padding: 3rem;
@@ -50,11 +71,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .form-control {
             border-radius: 15px;
             padding: 0.8rem 1.2rem;
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            background: rgba(255, 255, 255, 0.8);
+            border: 1.5px solid var(--pink-200);
+            background: var(--cream);
         }
         .form-control:focus {
-            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+            box-shadow: 0 0 0 4px rgba(232, 98, 140, 0.1);
             border-color: var(--primary);
             background: #fff;
         }
