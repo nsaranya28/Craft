@@ -13,20 +13,29 @@ include 'includes/db.php';
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=2.0">
 </head>
 <body>
 
     <!-- Navbar brand with cute ribbon -->
     <nav class="navbar navbar-expand-lg glass-nav">
         <div class="container-fluid">
-            <a class="navbar-brand font-serif fs-4 fw-bold text-gradient" href="index.php">CraftyGifts <span style="font-size: 1rem;">🎀</span> <span style="font-size: 0.8rem; color: var(--primary-light);">♡</span></a>
+            <a class="navbar-brand font-serif fs-3 fw-bold text-gradient" href="index.php">
+                CraftyGifts
+                <svg class="brand-ribbon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="36" height="36" style="color: var(--primary); fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; vertical-align: middle; margin-left: 2px;">
+                    <path d="M32 32 C20 18, 10 24, 16 36 C20 44, 30 36, 32 32 Z" fill="rgba(226, 95, 132, 0.15)"/>
+                    <path d="M32 32 C44 18, 54 24, 48 36 C44 44, 34 36, 32 32 Z" fill="rgba(226, 95, 132, 0.15)"/>
+                    <path d="M28 34 C24 44, 18 50, 20 54 M20 54 C23 54, 25 50, 27 46"/>
+                    <path d="M36 34 C40 44, 46 50, 44 54 M44 54 C41 54, 39 50, 37 46"/>
+                    <circle cx="32" cy="32" r="5" fill="var(--primary)"/>
+                </svg>
+            </a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <i class="fas fa-bars" style="color: var(--primary);"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link fw-medium" href="index.php">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active fw-medium" href="index.php">Home</a></li>
                     <li class="nav-item"><a class="nav-link fw-medium" href="products.php">Shop</a></li>
                     <li class="nav-item"><a class="nav-link fw-medium" href="#custom">Custom Order</a></li>
                     <li class="nav-item"><a class="nav-link fw-medium" href="#about">About</a></li>
@@ -43,73 +52,167 @@ include 'includes/db.php';
             </div>
         </div>
     </nav>
+    <div class="navbar-scallop-divider"></div>
 
     <!-- Hero Section -->
     <section class="hero-section">
         <!-- Floating Hearts & Sparkles -->
-        <span class="doodle doodle-heart" style="top: 8%; left: 4%; font-size: 1.8rem; animation-delay: 0s;">♡</span>
-        <span class="doodle doodle-heart" style="top: 35%; left: 2%; font-size: 1.2rem; animation-delay: 1s; animation-name: pulse-soft;">♡</span>
-        <span class="doodle doodle-sparkle" style="top: 15%; left: 35%; animation-delay: 0.5s; animation-name: twinkle;">✦</span>
-        <span class="doodle doodle-heart" style="top: 18%; right: 35%; font-size: 2rem; animation-delay: 2s;">♡</span>
-        <span class="doodle doodle-sparkle" style="top: 45%; left: 45%; font-size: 0.8rem; animation-delay: 1.5s; animation-name: twinkle;">✦</span>
-        <span class="doodle doodle-heart" style="bottom: 25%; left: 15%; font-size: 1rem; animation-delay: 3s; animation-name: pulse-soft;">♡</span>
-        <span class="doodle doodle-sparkle" style="top: 60%; right: 40%; font-size: 0.7rem; animation-delay: 2.5s; animation-name: twinkle;">✧</span>
-        <span class="doodle doodle-heart" style="top: 25%; right: 8%; font-size: 1.5rem; animation-delay: 0.8s;">♡</span>
-        <span class="doodle" style="top: 5%; right: 12%; font-size: 2.5rem; animation-delay: 0.3s; animation-name: float-reverse;">🎀</span>
+        <!-- Cute Sparkles SVG -->
+        <svg class="doodle" style="top: 8%; left: 4%; width: 24px; height: 24px; color: var(--primary-light); animation-delay: 0s; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;" viewBox="0 0 24 24">
+            <path d="M12 3 L14 9 L20 12 L14 15 L12 21 L10 15 L4 12 L10 9 Z" fill="rgba(242, 161, 183, 0.15)"/>
+        </svg>
+        <svg class="doodle" style="top: 35%; left: 2%; width: 18px; height: 18px; color: var(--primary-light); animation-delay: 1s; animation-name: pulse-soft; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;" viewBox="0 0 24 24">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+        </svg>
+        <svg class="doodle" style="top: 15%; left: 35%; width: 20px; height: 20px; color: var(--primary); animation-delay: 0.5s; animation-name: twinkle; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;" viewBox="0 0 24 24">
+            <path d="M12 3 L14 9 L20 12 L14 15 L12 21 L10 15 L4 12 L10 9 Z" fill="rgba(226, 95, 132, 0.2)"/>
+        </svg>
+        <svg class="doodle" style="top: 18%; right: 35%; width: 28px; height: 28px; color: var(--primary-light); animation-delay: 2s; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8;" viewBox="0 0 24 24">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+        </svg>
+        <svg class="doodle" style="top: 45%; left: 45%; width: 14px; height: 14px; color: var(--primary); animation-delay: 1.5s; animation-name: twinkle; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;" viewBox="0 0 24 24">
+            <path d="M12 3 L14 9 L20 12 L14 15 L12 21 L10 15 L4 12 L10 9 Z" />
+        </svg>
+        <svg class="doodle" style="bottom: 25%; left: 15%; width: 16px; height: 16px; color: var(--primary-light); animation-delay: 3s; animation-name: pulse-soft; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;" viewBox="0 0 24 24">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+        </svg>
+        <svg class="doodle" style="top: 25%; right: 8%; width: 22px; height: 22px; color: var(--primary-light); animation-delay: 0.8s; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;" viewBox="0 0 24 24">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+        </svg>
         
+        <!-- Paper Plane Winding Trail -->
+        <svg class="doodle-paperplane d-none d-lg-block" style="position: absolute; bottom: 8%; left: 22%; width: 220px; height: 100px; opacity: 0.6; z-index: 1; pointer-events: none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 100" fill="none">
+            <path d="M10 80 Q 70 95 110 55 T 180 30" stroke="var(--primary-light)" stroke-width="2" stroke-dasharray="4,4" stroke-linecap="round"/>
+            <g transform="translate(180, 20) rotate(-15)">
+                <path d="M0 10 L18 0 L6 13 L0 10 Z" fill="var(--primary)" stroke="var(--primary)" stroke-width="1"/>
+                <path d="M18 0 L8 7 L6 13 L18 0 Z" fill="var(--primary-light)" stroke="var(--primary)" stroke-width="1"/>
+            </g>
+        </svg>
+
         <div class="container" style="position: relative; z-index: 3;">
             <div class="row align-items-center g-5">
                 <div class="col-lg-6 fade-up">
                     <div class="badge-custom">
-                        <i class="fas fa-heart"></i> Handmade with Love
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="color: var(--primary); vertical-align: middle;">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                        Handmade with Love
                     </div>
-                    <h1 class="display-3 fw-bold mb-4 font-serif text-dark">
-                        Thoughtful Gifts, <span class="text-gradient">Handcrafted</span> with Love <span style="font-size: 1.5rem; color: var(--primary-light);">♡</span>
+                    <h1 class="display-4 fw-bold mb-4 font-serif text-dark" style="line-height: 1.25;">
+                        Thoughtful Gifts,<br>
+                        <span class="text-gradient">Handcrafted</span> with 
+                        <span style="position: relative; display: inline-block;">
+                            Love
+                            <svg style="position: absolute; bottom: -6px; left: 0; width: 100%; height: 8px;" viewBox="0 0 100 10" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 5 Q 50 9 97 3" stroke="var(--primary)" stroke-width="3" stroke-linecap="round" fill="none"/>
+                            </svg>
+                        </span>
+                        <span style="font-size: 1.8rem; color: var(--primary-light); font-family: 'Poppins';">♡</span>
                     </h1>
                     <p class="lead text-secondary mb-4" style="font-size: 1.05rem;">
                         <span style="color: var(--primary);">♥</span> Unique handcrafted gifts designed to create lasting memories. Explore our collection or request a custom design tailored just for you.
                     </p>
                     <div class="d-flex flex-wrap gap-3 mb-4">
                         <a href="products.php" class="btn btn-primary-custom btn-lg">
-                            Shop Collection <i class="fas fa-arrow-right ms-2"></i>
+                            Shop Collection <i class="fas fa-arrow-right ms-2" style="font-size: 0.9rem;"></i>
                         </a>
                         <a href="#custom" class="btn btn-outline-custom btn-lg">
-                            Custom Order <span style="margin-left: 4px;">♡</span>
+                            Custom Order 
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle;">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
                         </a>
                     </div>
                     
                     <!-- Feature Highlights -->
                     <div class="feature-highlights">
                         <div class="feature-highlight-item">
-                            <div class="feature-highlight-icon"><i class="fas fa-heart"></i></div>
+                            <div class="feature-highlight-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 10c1.5-2 3.5-2.5 5-1.5s1.5 3.5 0 5L12 18l-5-4.5c-1.5-1.5-1.5-4 0-5s3.5-.5 5 1.5z" fill="rgba(226, 95, 132, 0.1)"/>
+                                    <path d="M3 14c.5-1.5 2-2 3.5-1.5s2 2 3.5 1.5" />
+                                    <path d="M14 14c.5 1 2 1.5 3 1s1.5-2 1-3.5" />
+                                </svg>
+                            </div>
                             <div><small class="fw-medium">Handmade<br>with Care</small></div>
                         </div>
                         <div class="feature-highlight-item">
-                            <div class="feature-highlight-icon"><i class="fas fa-gift"></i></div>
+                            <div class="feature-highlight-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="8" width="18" height="4" rx="1" fill="rgba(226, 95, 132, 0.1)"/>
+                                    <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+                                    <path d="M12 8v13" />
+                                    <path d="M12 8H7a2 2 0 0 1 0-4c2 0 5 4 5 4z" />
+                                    <path d="M12 8h5a2 2 0 0 0 0-4c-2 0-5 4-5 4z" />
+                                </svg>
+                            </div>
                             <div><small class="fw-medium">Unique &<br>Meaningful</small></div>
                         </div>
                         <div class="feature-highlight-item">
-                            <div class="feature-highlight-icon"><i class="fas fa-leaf"></i></div>
+                            <div class="feature-highlight-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 8.4 19 13.5c-3 1.5-5.5.5-8 6.5z" fill="rgba(226, 95, 132, 0.1)"/>
+                                    <path d="M9 21c2-3 4-5 7-6" />
+                                </svg>
+                            </div>
                             <div><small class="fw-medium">Sustainable<br>& Thoughtful</small></div>
                         </div>
                     </div>
                 </div>
+                
                 <div class="col-lg-6 fade-up" style="transition-delay: 0.2s; position: relative;">
-                    <div class="hero-img-wrap">
-                        <img src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&q=80&w=800" alt="Handmade Gift" class="hero-img">
+                    <div class="hero-img-container">
+                        <!-- Ribbon Bow Overlay -->
+                        <svg class="ribbon-bow-overlay" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor">
+                            <path d="M32 32 C20 15, 8 20, 14 34 C18 42, 28 36, 32 32 Z" fill="#EA698B" stroke="#D14A74" stroke-width="2"/>
+                            <path d="M32 32 C44 15, 56 20, 50 34 C46 42, 36 36, 32 32 Z" fill="#EA698B" stroke="#D14A74" stroke-width="2"/>
+                            <path d="M30 33 C26 44, 16 52, 12 55 M12 55 C16 55, 20 50, 22 45" stroke="#D14A74" stroke-width="2.5" stroke-linecap="round"/>
+                            <path d="M34 33 C38 44, 48 52, 52 55 M52 55 C48 55, 44 50, 42 45" stroke="#D14A74" stroke-width="2.5" stroke-linecap="round"/>
+                            <circle cx="32" cy="32" r="5" fill="#D14A74"/>
+                        </svg>
+                        <div class="hero-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&q=80&w=800" alt="Handmade Gift" class="hero-img">
+                        </div>
                     </div>
                     <!-- Sticker Note -->
-                    <div class="sticker-note d-none d-lg-block" style="bottom: -10px; right: -10px; transform: rotate(3deg);">
-                        made with<br>love <span style="color: var(--primary);">♡</span>
+                    <div class="sticker-note d-none d-lg-block">
+                        <svg style="color: var(--primary); fill: var(--primary); margin-bottom: 2px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                        <div style="font-family: 'Caveat', cursive; font-size: 1.25rem; line-height: 1.1; font-weight: 500;">
+                            made<br>with<br>love <span style="font-family: 'Poppins'; font-size: 0.95rem;">♡</span>
+                        </div>
                     </div>
                     <!-- Cloud Bubble -->
-                    <div class="cloud-bubble d-none d-lg-block" style="bottom: -40px; right: 30%; width: 160px; height: 100px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
-                        <span>✧ Because every gift<br>tells a story <span style="color: var(--primary);">♡</span></span>
+                    <div class="cloud-bubble-wrap d-none d-lg-block">
+                        <svg class="cloud-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" width="100%" height="100%">
+                            <path d="M 50,80 A 30,30 0 0,1 40,30 A 35,35 0 0,1 110,20 A 35,35 0 0,1 170,40 A 30,30 0 0,1 160,90 A 25,25 0 0,1 100,100 A 25,25 0 0,1 50,80 Z" fill="var(--white)" stroke="var(--pink-200)" stroke-width="2" stroke-dasharray="4,4"/>
+                        </svg>
+                        <div class="cloud-content">
+                            <svg class="cloud-ribbon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="20" height="20" fill="none" stroke="currentColor">
+                                <path d="M32 32 C20 18, 10 24, 16 36 C20 44, 30 36, 32 32 Z" fill="#FFE4EA" stroke="var(--primary)" stroke-width="2"/>
+                                <path d="M32 32 C44 18, 54 24, 48 36 C44 44, 34 36, 32 32 Z" fill="#FFE4EA" stroke="var(--primary)" stroke-width="2"/>
+                                <circle cx="32" cy="32" r="4" fill="var(--primary)"/>
+                            </svg>
+                            <p class="cloud-text">Because every gift<br>✧ tells a story ♡</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Scallop bottom divider for Hero -->
+    <div class="hero-bottom-divider"></div>
+    <!-- Gingham Stripe -->
+    <div class="gingham-stripe">
+        <span class="stripe-heart" style="left: 10%;">♡</span>
+        <span class="stripe-heart" style="left: 30%;">♡</span>
+        <span class="stripe-heart" style="left: 50%;">♡</span>
+        <span class="stripe-heart" style="left: 70%;">♡</span>
+        <span class="stripe-heart" style="left: 90%;">♡</span>
+    </div>
+    <div class="hero-bottom-divider-reversed"></div>
 
     <!-- Featured Products -->
     <section class="section-padding bg-white" id="featured">
