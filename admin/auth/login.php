@@ -18,6 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($admin && password_verify($password, $admin['password'])) {
         $_SESSION['admin_id'] = $admin['id'];
         $_SESSION['admin_email'] = $email;
+        $_SESSION['role'] = 'admin';
+        $_SESSION['admin'] = true;
         // Regenerate session ID to prevent fixation
         session_regenerate_id(true);
         header('Location: ../dashboard.php');

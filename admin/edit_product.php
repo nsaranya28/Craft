@@ -11,6 +11,25 @@ if (!isAdminLoggedIn()) {
     exit;
 }
 
+$id = intval($_GET['id'] ?? 0);
+if ($id <= 0) {
+    header('Location: manage_products.php');
+    exit;
+}
+
+// Fetch current product
+try {
+    $stmt = $pdo->prepare("SELECT * FROM products WHERE id = ?");
+    $stmt->execute([$id]);
+    $product = $stmt->fetch();
+    if (!$product) {
+        header('Location: manage_products.php');
+        exit;
+    }
+} catch (PDOException $e) {
+    die("Error loading product: " . $e->getMessage());
+}
+
 $success = '';
 $error = '';
 
@@ -23,10 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $is_featured = isset($_POST['is_featured']) ? 1 : 0;
     $is_new = isset($_POST['is_new']) ? 1 : 0;
 
-    // Handle image upload
-    $image_url_or_path = '';
-    
-    // Check if user uploaded a file
+    $image_url_or_path = $product['image']; // Default to current
+
+    // Handle image upload if a new one is selected
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
         $target_dir = '../assets/img/products/';
         if (!file_exists($target_dir)) {
@@ -35,14 +53,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $filename = time() . '_' . basename($_FILES['image']['name']);
         $target_file = $target_dir . $filename;
         if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
-            // Store path relative to the root index.php (e.g. assets/img/products/123_test.png)
             $image_url_or_path = 'assets/img/products/' . $filename;
         } else {
             $error = 'Failed to move uploaded file.';
         }
-    } else {
-        // Fallback or external URL if provided
-        $image_url_or_path = trim($_POST['image_url'] ?? '');
+    } elseif (!empty($_POST['image_url'])) {
+        $image_url_or_path = trim($_POST['image_url']);
     }
 
     if (empty($error)) {
@@ -50,30 +66,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Product name and base price are required.';
         } else {
             try {
-                $stmt = $pdo->prepare(
-                    "INSERT INTO products (category_id, name, description, base_price, image, gallery_images, stock_quantity, is_featured, is_new) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                $updateStmt = $pdo->prepare(
+                    "UPDATE products SET category_id = ?, name = ?, description = ?, base_price = ?, image = ?, stock_quantity = ?, is_featured = ?, is_new = ? WHERE id = ?"
                 );
-                $gallery_json = json_encode([]);
-                $stmt->execute([
+                $updateStmt->execute([
                     $category_id ?: null,
                     $name,
                     $description,
                     $base_price,
-                    $image_url_or_path ?: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&q=80&w=500',
-                    $gallery_json,
+                    $image_url_or_path,
                     $stock_quantity,
                     $is_featured,
-                    $is_new
+                    $is_new,
+                    $id
                 ]);
-                $success = 'Product created successfully.';
+                $success = 'Product updated successfully.';
+                
+                // Refresh product data
+                $stmt->execute([$id]);
+                $product = $stmt->fetch();
             } catch (PDOException $e) {
-                $error = 'Failed to create product: ' . $e->getMessage();
+                $error = 'Failed to update product: ' . $e->getMessage();
             }
         }
     }
 }
 
-$pageTitle = 'Add Product';
+$pageTitle = 'Edit Product';
 include 'includes/header.php';
 include 'includes/sidebar.php';
 ?>
@@ -81,8 +100,8 @@ include 'includes/sidebar.php';
 <div class="glass-card">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 class="fw-bold mb-1">Add New Product</h4>
-            <p class="text-muted small mb-0">Fill out details to list a new handcrafted product</p>
+            <h4 class="fw-bold mb-1">Edit Product</h4>
+            <p class="text-muted small mb-0">Modify information for product #<?php echo $product['id']; ?></p>
         </div>
         <a href="manage_products.php" class="btn btn-premium-outline btn-sm"><i class="fa-solid fa-arrow-left me-2"></i>Back to Products</a>
     </div>
@@ -102,7 +121,7 @@ include 'includes/sidebar.php';
     <form method="POST" enctype="multipart/form-data" class="row g-3">
         <div class="col-md-6">
             <label class="form-label fw-bold">Product Name <span class="text-danger">*</span></label>
-            <input type="text" name="name" class="form-control" placeholder="e.g. Handmade Ceramic Coffee Mug" required>
+            <input type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($product['name']); ?>" required>
         </div>
         
         <div class="col-md-6">
@@ -112,53 +131,68 @@ include 'includes/sidebar.php';
                 <?php
                 $catStmt = $pdo->query("SELECT id, name FROM categories ORDER BY name");
                 while ($cat = $catStmt->fetch()):
+                    $selected = ($cat['id'] == $product['category_id']) ? 'selected' : '';
                 ?>
-                    <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['name']); ?></option>
+                    <option value="<?php echo $cat['id']; ?>" <?php echo $selected; ?>><?php echo htmlspecialchars($cat['name']); ?></option>
                 <?php endwhile; ?>
             </select>
         </div>
 
         <div class="col-12">
             <label class="form-label fw-bold">Description</label>
-            <textarea name="description" class="form-control" rows="4" placeholder="Detail the craftsmanship, size, material, customization options..."></textarea>
+            <textarea name="description" class="form-control" rows="4" required><?php echo htmlspecialchars($product['description']); ?></textarea>
         </div>
 
         <div class="col-md-4">
             <label class="form-label fw-bold">Base Price ($) <span class="text-danger">*</span></label>
-            <input type="number" step="0.01" name="base_price" class="form-control" placeholder="19.99" required>
+            <input type="number" step="0.01" name="base_price" class="form-control" value="<?php echo htmlspecialchars($product['base_price']); ?>" required>
         </div>
 
         <div class="col-md-4">
             <label class="form-label fw-bold">Stock Quantity</label>
-            <input type="number" name="stock_quantity" class="form-control" placeholder="10" value="0">
+            <input type="number" name="stock_quantity" class="form-control" value="<?php echo htmlspecialchars($product['stock_quantity']); ?>" required>
         </div>
 
         <div class="col-md-4 d-flex align-items-center mt-4 pt-2">
             <div class="form-check me-4">
-                <input class="form-check-input" type="checkbox" name="is_featured" id="featured">
+                <input class="form-check-input" type="checkbox" name="is_featured" id="featured" <?php echo $product['is_featured'] ? 'checked' : ''; ?>>
                 <label class="form-check-label fw-semibold" for="featured">Featured Product</label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="is_new" id="new" checked>
+                <input class="form-check-input" type="checkbox" name="is_new" id="new" <?php echo $product['is_new'] ? 'checked' : ''; ?>>
                 <label class="form-check-label fw-semibold" for="new">New Arrival</label>
             </div>
         </div>
 
-        <div class="col-md-6">
-            <label class="form-label fw-bold">Upload Product Image</label>
-            <input type="file" name="image" class="form-control" accept="image/*">
-            <div class="form-text">Supports PNG, JPG, JPEG. Will be saved to local assets.</div>
+        <div class="col-md-3">
+            <label class="form-label fw-bold d-block">Current Image</label>
+            <?php
+            $imgSrc = $product['image'];
+            if (!preg_match('/^https?:\/\//i', $imgSrc) && !empty($imgSrc)) {
+                $imgSrc = '../' . $imgSrc;
+            }
+            ?>
+            <img src="<?php echo htmlspecialchars($imgSrc ?: '../assets/img/products/default.jpg'); ?>" 
+                 alt="Current product image" 
+                 class="rounded-3 border shadow-sm img-thumbnail"
+                 style="max-width: 120px; height: 120px; object-fit: cover;">
         </div>
 
-        <div class="col-md-6">
-            <label class="form-label fw-bold">Or Image URL</label>
-            <input type="url" name="image_url" class="form-control" placeholder="https://images.unsplash.com/...">
-            <div class="form-text">Used if no file is uploaded.</div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Replace Product Image</label>
+            <input type="file" name="image" class="form-control" accept="image/*">
+            <div class="form-text">Leave blank to keep current image.</div>
+        </div>
+
+        <div class="col-md-5">
+            <label class="form-label fw-bold">Or Change Image URL</label>
+            <input type="url" name="image_url" class="form-control" placeholder="https://images.unsplash.com/..." value="<?php echo htmlspecialchars($product['image']); ?>">
+            <div class="form-text">Will be overridden if a new file is uploaded.</div>
         </div>
 
         <div class="col-12 d-flex justify-content-end gap-2 mt-4">
-            <button type="reset" class="btn btn-premium-outline">Reset Form</button>
-            <button type="submit" class="btn btn-premium"><i class="fa-solid fa-save me-2"></i>Create Product</button>
+            <a href="manage_products.php" class="btn btn-premium-outline">Cancel</a>
+            <button type="submit" class="btn btn-premium"><i class="fa-solid fa-save me-2"></i>Save Changes</button>
         </div>
     </form>
 </div>

@@ -1,127 +1,139 @@
 <?php
-session_start();
-include '../includes/db.php';
-
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    die("Access Denied. Admins only.");
-}
+$pageTitle = 'Dashboard';
+include 'includes/header.php';
+include 'includes/sidebar.php';
 
 // Stats
-$userCount = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
-$orderCount = $pdo->query("SELECT COUNT(*) FROM orders")->fetchColumn();
-$requestCount = $pdo->query("SELECT COUNT(*) FROM custom_orders")->fetchColumn();
-$revenue = $pdo->query("SELECT SUM(total_amount) FROM orders WHERE payment_status='paid'")->fetchColumn() ?: 0;
-
-$recentOrders = $pdo->query("SELECT o.*, u.name as user_name FROM orders o JOIN users u ON o.user_id = u.id ORDER BY o.order_date DESC LIMIT 5")->fetchAll();
+try {
+    $userCount = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+    $orderCount = $pdo->query("SELECT COUNT(*) FROM orders")->fetchColumn();
+    $requestCount = $pdo->query("SELECT COUNT(*) FROM custom_orders")->fetchColumn();
+    $revenue = $pdo->query("SELECT SUM(total_amount) FROM orders WHERE payment_status='paid'")->fetchColumn() ?: 0;
+    
+    $recentOrders = $pdo->query("SELECT o.*, u.name as user_name FROM orders o JOIN users u ON o.user_id = u.id ORDER BY o.order_date DESC LIMIT 5")->fetchAll();
+} catch (PDOException $e) {
+    echo "<div class='alert alert-danger'>Database query error: " . $e->getMessage() . "</div>";
+    $userCount = 0;
+    $orderCount = 0;
+    $requestCount = 0;
+    $revenue = 0;
+    $recentOrders = [];
+}
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | CraftyGifts</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <style>
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-        .stat-card {
-            padding: 2rem;
-            text-align: center;
-        }
-        .stat-card h4 { color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem; }
-        .stat-card .value { font-size: 2rem; font-weight: 800; color: var(--primary); }
-        
-        .admin-layout {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 2rem;
-        }
-        .admin-nav { height: calc(100vh - 150px); }
-        .admin-nav ul { list-style: none; }
-        .admin-nav li { margin-bottom: 0.5rem; }
-        .admin-nav a { padding: 1rem; border-radius: 0.5rem; display: block; }
-        .admin-nav a:hover { background: #f1f5f9; }
-        .admin-nav a.active { background: var(--primary); color: white; }
-    </style>
-</head>
-<body>
-    <header class="glass">
-        <nav>
-            <a href="../index.php" class="logo">CraftyGifts <span style="font-size: 0.8rem; vertical-align: middle; opacity: 0.7;">Admin</span></a>
-            <div class="nav-btns">
-                <a href="../auth/logout.php" class="btn btn-outline">Logout</a>
-            </div>
-        </nav>
-    </header>
 
-    <main style="padding: 3rem 5%;">
-        <div class="admin-layout">
-            <aside class="card admin-nav">
-                <ul>
-                    <li><a href="#" class="active">Overview</a></li>
-                    <li><a href="create_product.php" class="">Manage Products</a></li>
-                    <li><a href="#">Categories</a></li>
-                    <li><a href="create_order.php" class="">Create Order</a></li>
-                    <li><a href="#">Custom Requests</a></li>
-                    <li><a href="#">Users</a></li>
-                    <li><a href="#">Reports</a></li>
-                </ul>
-            </aside>
-
-            <div class="content">
-                <div class="stats-grid">
-                    <div class="card stat-card">
-                        <h4>Total Revenue</h4>
-                        <div class="value">$<?php echo number_format($revenue, 2); ?></div>
-                    </div>
-                    <div class="card stat-card">
-                        <h4>Active Users</h4>
-                        <div class="value"><?php echo $userCount; ?></div>
-                    </div>
-                    <div class="card stat-card">
-                        <h4>Total Orders</h4>
-                        <div class="value"><?php echo $orderCount; ?></div>
-                    </div>
-                    <div class="card stat-card">
-                        <h4>Custom Req.</h4>
-                        <div class="value"><?php echo $requestCount; ?></div>
-                    </div>
+<!-- Stat Cards Grid -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-3 col-sm-6">
+        <div class="glass-card h-100 d-flex flex-column justify-content-between">
+            <div>
+                <div class="stat-icon-wrapper" style="background: rgba(124, 77, 255, 0.15); color: var(--accent-purple);">
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
                 </div>
-
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                        <h3>Recent Orders</h3>
-                        <a href="#" class="text-gradient">View All Orders</a>
-                    </div>
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="text-align: left; border-bottom: 1px solid #f1f5f9;">
-                                <th style="padding: 1rem;">Customer</th>
-                                <th style="padding: 1rem;">Amount</th>
-                                <th style="padding: 1rem;">Status</th>
-                                <th style="padding: 1rem;">Date</th>
-                                <th style="padding: 1rem;">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach($recentOrders as $ro): ?>
-                            <tr style="border-bottom: 1px solid #f1f5f9;">
-                                <td style="padding: 1rem;"><?php echo $ro['user_name']; ?></td>
-                                <td style="padding: 1rem;">$<?php echo $ro['total_amount']; ?></td>
-                                <td style="padding: 1rem;"><span style="padding: 0.2rem 0.6rem; border-radius: 1rem; background: #ffe0ed; color: #E8628C; font-size: 0.8rem;"><?php echo $ro['status']; ?></span></td>
-                                <td style="padding: 1rem;"><?php echo date('M d', strtotime($ro['order_date'])); ?></td>
-                                <td style="padding: 1rem;"><a href="#" class="text-gradient">Edit</a></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                <h6 class="text-muted small uppercase fw-bold">Total Revenue</h6>
+                <h3 class="fw-bold mt-2">$<?php echo number_format($revenue, 2); ?></h3>
             </div>
+            <p class="text-success small mb-0 mt-3"><i class="fa-solid fa-arrow-up me-1"></i> Paid orders only</p>
         </div>
-    </main>
-</body>
-</html>
+    </div>
+    <div class="col-xl-3 col-sm-6">
+        <div class="glass-card h-100 d-flex flex-column justify-content-between">
+            <div>
+                <div class="stat-icon-wrapper" style="background: rgba(232, 98, 140, 0.15); color: var(--accent-pink);">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <h6 class="text-muted small uppercase fw-bold">Active Users</h6>
+                <h3 class="fw-bold mt-2"><?php echo number_format($userCount); ?></h3>
+            </div>
+            <p class="text-muted small mb-0 mt-3">Registered accounts</p>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6">
+        <div class="glass-card h-100 d-flex flex-column justify-content-between">
+            <div>
+                <div class="stat-icon-wrapper" style="background: rgba(74, 222, 128, 0.15); color: #15803d;">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+                <h6 class="text-muted small uppercase fw-bold">Total Orders</h6>
+                <h3 class="fw-bold mt-2"><?php echo number_format($orderCount); ?></h3>
+            </div>
+            <p class="text-muted small mb-0 mt-3"><a href="manage_orders.php" class="text-decoration-none" style="color: var(--accent-purple);">Manage Deliveries →</a></p>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6">
+        <div class="glass-card h-100 d-flex flex-column justify-content-between">
+            <div>
+                <div class="stat-icon-wrapper" style="background: rgba(251, 191, 36, 0.15); color: #b45309;">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <h6 class="text-muted small uppercase fw-bold">Custom Requests</h6>
+                <h3 class="fw-bold mt-2"><?php echo number_format($requestCount); ?></h3>
+            </div>
+            <p class="text-muted small mb-0 mt-3">Pending quotes/designs</p>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Orders Section -->
+<div class="glass-card">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h4 class="fw-bold mb-1">Recent Orders</h4>
+            <p class="text-muted small mb-0">Overview of the last 5 placed customer orders</p>
+        </div>
+        <a href="manage_orders.php" class="btn btn-premium btn-sm"><i class="fa-solid fa-list-check me-2"></i>View All Deliveries</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Total Amount</th>
+                    <th>Payment Status</th>
+                    <th>Delivery Status</th>
+                    <th>Order Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($recentOrders)): ?>
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">No recent orders found.</td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($recentOrders as $ro): ?>
+                        <tr>
+                            <td>
+                                <div class="fw-bold text-dark"><?php echo htmlspecialchars($ro['user_name']); ?></div>
+                                <div class="text-muted small">Order #<?php echo $ro['id']; ?></div>
+                            </td>
+                            <td class="fw-semibold text-dark">
+                                $<?php echo number_format($ro['total_amount'], 2); ?>
+                            </td>
+                            <td>
+                                <span class="badge-status status-<?php echo strtolower($ro['payment_status']); ?>">
+                                    <?php echo htmlspecialchars($ro['payment_status']); ?>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge-status status-<?php echo strtolower($ro['status']); ?>">
+                                    <?php echo htmlspecialchars($ro['status']); ?>
+                                </span>
+                            </td>
+                            <td class="text-muted small">
+                                <?php echo date('M d, Y h:i A', strtotime($ro['order_date'])); ?>
+                            </td>
+                            <td>
+                                <a href="manage_orders.php?edit_id=<?php echo $ro['id']; ?>" class="btn btn-premium-outline btn-sm py-1 px-3">
+                                    <i class="fa-regular fa-edit me-1"></i> Manage
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<?php include 'includes/footer.php'; ?>
