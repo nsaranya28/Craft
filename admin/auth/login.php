@@ -12,7 +12,7 @@ $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email']);
     $password = $_POST['password'];
-    $stmt = $pdo->prepare('SELECT id, password FROM admin_users WHERE email = ? LIMIT 1');
+    $stmt = $pdo->prepare('SELECT id, password FROM admins WHERE email = ? LIMIT 1');
     $stmt->execute([$email]);
     $admin = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($admin && password_verify($password, $admin['password'])) {
