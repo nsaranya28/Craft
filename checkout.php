@@ -11,12 +11,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Process order
     $user_id = $_SESSION['user_id'];
     $total = $_POST['total'];
-    
-    $stmt = $pdo->prepare("INSERT INTO orders (user_id, total_amount, status, payment_status) VALUES (?, ?, 'ordered', 'paid')");
-    $stmt->execute([$user_id, $total]);
-    
-    $_SESSION['cart'] = []; // Clear cart
-    $success = true;
+    $shipping_address = trim($_POST['shipping_address'] ?? '');
+    $payment_method = $_POST['payment_method'] ?? 'demo';
+
+    if (empty($shipping_address)) {
+        $error = 'Please enter your shipping address.';
+    } else {
+        $stmt = $pdo->prepare("INSERT INTO orders (user_id, total_amount, status, payment_status, shipping_address) VALUES (?, ?, 'ordered', 'paid', ?)");
+        $stmt->execute([$user_id, $total, $shipping_address]);
+
+        $_SESSION['cart'] = []; // Clear cart
+        $success = true;
+        $selected_payment = $payment_method;
+    }
 }
 
 $total = 0;
@@ -97,26 +104,66 @@ foreach ($_SESSION['cart'] ?? [] as $item) {
                 <?php if (isset($success)): ?>
                     <div style="font-size: 4rem; margin-bottom: 1.5rem;">🎉</div>
                     <h2 class="font-serif mb-2 text-dark">Order Placed Successfully!</h2>
-                    <p class="text-secondary mb-4 pb-3 border-bottom border-pink-dashed">Your unique crafts are being prepared with love. You can track your order status in your dashboard.</p>
+                    <p class="text-secondary mb-3">Your unique crafts are being prepared with love.</p>
+                    <?php if (!empty($selected_payment) && $selected_payment !== 'demo'): ?>
+                        <div class="alert alert-info rounded-cute mb-3" style="font-size:0.9rem;">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Payment via <strong><?php echo htmlspecialchars(ucfirst($selected_payment)); ?></strong> is simulated in demo mode. No actual charge was made.
+                        </div>
+                    <?php endif; ?>
+                    <p class="text-secondary mb-4 pb-3 border-bottom">You can track your order status in your dashboard.</p>
                     <a href="user/dashboard.php" class="btn btn-primary-custom btn-lg">Go to Dashboard</a>
                 <?php else: ?>
                     <h2 class="font-serif mb-3 text-dark">Complete Your Order</h2>
-                    <p class="text-secondary fs-5 mb-4">Total Amount: <span class="price-tag fs-4">$<?php echo number_format($total, 2); ?></span></p>
-                    
-                    <form method="POST">
+                    <p class="text-secondary fs-5 mb-4">Total Amount: <span class="price-tag fs-4">₹<?php echo number_format($total, 2); ?></span></p>
+
+                    <?php if (isset($error)): ?>
+                        <div class="alert alert-danger text-start rounded-cute mb-4"><?php echo htmlspecialchars($error); ?></div>
+                    <?php endif; ?>
+
+                    <form method="POST" class="text-start">
                         <input type="hidden" name="total" value="<?php echo $total; ?>">
-                        <div class="text-start mb-4">
-                            <h4 class="font-serif mb-3 text-dark">Payment Method</h4>
-                            <div class="card p-3 border-pink rounded-cute" style="background: var(--cream);">
-                                <div class="d-flex gap-2 align-items-center mb-2">
-                                    <i class="fas fa-lock text-success fs-5"></i>
-                                    <strong class="text-dark">Secure Demo Payment</strong>
-                                </div>
-                                <p class="text-secondary small mb-0">This is a demonstration store. No real payment transaction will be charged to your card.</p>
+
+                        <!-- Shipping Address -->
+                        <div class="mb-4">
+                            <h5 class="font-serif mb-2 text-dark"><i class="fas fa-map-marker-alt me-2" style="color:var(--primary);"></i>Shipping Address</h5>
+                            <textarea name="shipping_address" rows="3" class="form-control border-pink rounded-cute" placeholder="Enter your full delivery address..." required><?php echo htmlspecialchars($_POST['shipping_address'] ?? ''); ?></textarea>
+                        </div>
+
+                        <!-- Payment Method -->
+                        <div class="mb-4">
+                            <h5 class="font-serif mb-3 text-dark"><i class="fas fa-wallet me-2" style="color:var(--primary);"></i>Payment Method</h5>
+                            <div class="d-flex flex-column gap-3">
+
+                                <!-- Google Pay -->
+                                <label class="payment-option-card d-flex align-items-center gap-3 p-3 rounded-cute border-pink cursor-pointer" style="background:var(--cream); cursor:pointer;">
+                                    <input type="radio" name="payment_method" value="gpay" class="form-check-input mt-0" style="accent-color:var(--primary);">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/512px-Google_Pay_Logo.svg.png" alt="Google Pay" style="height:28px; object-fit:contain;">
+                                    <span class="fw-semibold text-dark">Google Pay</span>
+                                    <span class="ms-auto badge" style="background:var(--primary-light); color:var(--primary); font-size:0.7rem;">UPI</span>
+                                </label>
+
+                                <!-- PhonePe -->
+                                <label class="payment-option-card d-flex align-items-center gap-3 p-3 rounded-cute border-pink cursor-pointer" style="background:var(--cream); cursor:pointer;">
+                                    <input type="radio" name="payment_method" value="phonepe" class="form-check-input mt-0" style="accent-color:#5f259f;">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/PhonePe_Logo.svg/512px-PhonePe_Logo.svg.png" alt="PhonePe" style="height:28px; object-fit:contain;">
+                                    <span class="fw-semibold text-dark">PhonePe</span>
+                                    <span class="ms-auto badge" style="background:#ede7f6; color:#5f259f; font-size:0.7rem;">UPI</span>
+                                </label>
+
+                                <!-- Demo / COD -->
+                                <label class="payment-option-card d-flex align-items-center gap-3 p-3 rounded-cute border-pink cursor-pointer" style="background:var(--cream); cursor:pointer;">
+                                    <input type="radio" name="payment_method" value="demo" class="form-check-input mt-0" checked style="accent-color:#28a745;">
+                                    <i class="fas fa-truck fa-lg" style="color:#28a745;"></i>
+                                    <span class="fw-semibold text-dark">Cash on Delivery</span>
+                                    <span class="ms-auto badge bg-success-subtle text-success" style="font-size:0.7rem;">COD</span>
+                                </label>
+
                             </div>
                         </div>
+
                         <button type="submit" class="btn btn-primary-custom btn-lg w-100 py-3 d-flex align-items-center justify-content-center gap-2">
-                            <i class="fas fa-credit-card"></i> Pay & Place Order
+                            <i class="fas fa-lock me-1"></i> Confirm &amp; Place Order
                         </button>
                     </form>
                 <?php endif; ?>
