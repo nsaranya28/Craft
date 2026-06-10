@@ -22,12 +22,143 @@ if(!$product) die('Product not found');
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/style.css?v=2.0">
     <style>
-        .btn-outline-custom.active {
-            background-color: var(--pink-100) !important;
-            border-color: var(--primary) !important;
-            color: var(--primary) !important;
+        /* Custom Size Selector */
+        .size-selector input[type="radio"] {
+            display: none;
+        }
+        .size-selector label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            border: 2px solid var(--pink-200);
+            color: var(--text);
             font-weight: 600;
-            box-shadow: 0 4px 12px rgba(226, 95, 132, 0.1);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--white);
+        }
+        .size-selector input[type="radio"]:checked + label {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+            transform: scale(1.08);
+            box-shadow: 0 6px 16px rgba(226, 95, 132, 0.25);
+        }
+
+        /* Custom Color Swatches */
+        .color-selector input[type="radio"] {
+            display: none;
+        }
+        .color-selector .swatch-container {
+            text-align: center;
+            cursor: pointer;
+        }
+        .color-selector .swatch {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 2px solid var(--pink-200);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+            cursor: pointer;
+        }
+        .color-selector .swatch-white {
+            background-color: #FFFFFF;
+            border: 2.5px solid #FBC5D2;
+        }
+        .color-selector .swatch-black {
+            background-color: #2D2D2D;
+            border-color: #2D2D2D;
+        }
+        .color-selector .swatch-natural {
+            background-color: #E6C29E;
+            border-color: #E6C29E;
+        }
+        .color-selector input[type="radio"]:checked + .swatch {
+            transform: scale(1.18);
+            box-shadow: 0 0 0 3px var(--white), 0 0 0 6px var(--primary);
+        }
+        .color-selector .swatch-label-text {
+            font-size: 0.8rem;
+            margin-top: 6px;
+            color: var(--text-light);
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        .color-selector input[type="radio"]:checked ~ .swatch-label-text {
+            color: var(--primary);
+        }
+
+        /* Custom File Upload */
+        .custom-file-upload {
+            position: relative;
+        }
+        .file-upload-label {
+            display: block;
+            border: 2px dashed var(--pink-300);
+            padding: 1.5rem;
+            border-radius: 16px;
+            background: var(--cream);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text);
+        }
+        .file-upload-label:hover {
+            background: var(--pink-50);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .file-upload-label i {
+            color: var(--primary);
+        }
+
+        /* Custom Quantity Selector */
+        .quantity-selector {
+            border: 2px solid var(--pink-200);
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--cream);
+            width: fit-content;
+            display: flex;
+            align-items: center;
+        }
+        .qty-btn {
+            border: none;
+            background: transparent;
+            width: 44px;
+            height: 44px;
+            color: var(--primary);
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .qty-btn:hover {
+            background: var(--pink-100);
+        }
+        .qty-input {
+            border: none;
+            background: transparent;
+            width: 50px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--text);
+            outline: none;
+        }
+        .qty-input::-webkit-outer-spin-button,
+        .qty-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
     </style>
 </head>
@@ -81,19 +212,19 @@ if(!$product) die('Product not found');
             <div class="row g-5">
                 <!-- Product Preview Image -->
                 <div class="col-lg-6">
-                    <div class="card p-3 border-pink rounded-cute bg-white text-center shadow-sm">
+                    <div class="card p-4 border-pink rounded-cute bg-white text-center shadow-sm">
                         <img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="img-fluid rounded-cute shadow-sm mb-4" style="max-height: 480px; object-fit: cover; width: 100%;">
                         <div class="text-start px-2">
-                            <h2 class="font-serif mb-2 text-dark"><?php echo htmlspecialchars($product['name']); ?></h2>
-                            <p class="price-tag fs-3 mb-3">$<?php echo htmlspecialchars($product['base_price']); ?></p>
-                            <p class="text-secondary"><?php echo htmlspecialchars($product['description']); ?></p>
+                            <h2 class="font-serif mb-2 text-dark fs-1 fw-bold"><?php echo htmlspecialchars($product['name']); ?></h2>
+                            <p class="price-tag fs-2 mb-3">$<?php echo htmlspecialchars($product['base_price']); ?></p>
+                            <p class="text-secondary" style="font-size: 1.05rem; line-height: 1.7;"><?php echo htmlspecialchars($product['description']); ?></p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Customization Form -->
                 <div class="col-lg-6">
-                    <div class="card p-4 shadow-sm border-pink rounded-cute bg-white">
+                    <div class="card p-5 shadow-sm border-pink rounded-cute bg-white">
                         <h2 class="font-serif mb-4 text-dark border-bottom pb-3 border-pink-dashed">Customize Your Item</h2>
                         
                         <form action="cart-action.php" method="POST" enctype="multipart/form-data">
@@ -102,57 +233,77 @@ if(!$product) die('Product not found');
                             <!-- Size Options -->
                             <div class="mb-4">
                                 <label class="form-label fw-bold text-dark mb-2">Choose Size</label>
-                                <div class="d-flex gap-2 flex-wrap">
-                                    <label class="btn btn-outline-custom active option-item">
-                                        <input type="radio" name="size" value="Small" checked style="display:none"> Small
-                                    </label>
-                                    <label class="btn btn-outline-custom option-item">
-                                        <input type="radio" name="size" value="Medium" style="display:none"> Medium
-                                    </label>
-                                    <label class="btn btn-outline-custom option-item">
-                                        <input type="radio" name="size" value="Large" style="display:none"> Large
-                                    </label>
+                                <div class="size-selector d-flex gap-3">
+                                    <div>
+                                        <input type="radio" name="size" id="size-s" value="Small" checked>
+                                        <label for="size-s">S</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" name="size" id="size-m" value="Medium">
+                                        <label for="size-m">M</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" name="size" id="size-l" value="Large">
+                                        <label for="size-l">L</label>
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- Color Options -->
                             <div class="mb-4">
                                 <label class="form-label fw-bold text-dark mb-2">Select Color</label>
-                                <div class="d-flex gap-2 flex-wrap">
-                                    <label class="btn btn-outline-custom active option-item">
-                                        <input type="radio" name="color" value="White" checked style="display:none"> White
-                                    </label>
-                                    <label class="btn btn-outline-custom option-item">
-                                        <input type="radio" name="color" value="Black" style="display:none"> Black
-                                    </label>
-                                    <label class="btn btn-outline-custom option-item">
-                                        <input type="radio" name="color" value="Natural" style="display:none"> Natural
-                                    </label>
+                                <div class="color-selector d-flex gap-4">
+                                    <div class="swatch-container">
+                                        <input type="radio" name="color" id="color-white" value="White" checked>
+                                        <label for="color-white" class="swatch swatch-white" title="White"></label>
+                                        <div class="swatch-label-text">White</div>
+                                    </div>
+                                    <div class="swatch-container">
+                                        <input type="radio" name="color" id="color-black" value="Black">
+                                        <label for="color-black" class="swatch swatch-black" title="Black"></label>
+                                        <div class="swatch-label-text">Black</div>
+                                    </div>
+                                    <div class="swatch-container">
+                                        <input type="radio" name="color" id="color-natural" value="Natural">
+                                        <label for="color-natural" class="swatch swatch-natural" title="Natural"></label>
+                                        <div class="swatch-label-text">Natural</div>
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- Personalization Text -->
-                            <div class="mb-4">
+                            <div class="mb-4 mt-2">
                                 <label class="form-label fw-bold text-dark mb-1">Custom Text / Personalization</label>
                                 <p class="text-secondary small mb-2">Enter the text you want engraved or printed on the item.</p>
-                                <textarea class="form-control" name="custom_text" rows="3" placeholder="e.g. 'Happy Birthday Sarah!', 'Established 2024'"></textarea>
+                                <textarea class="form-control" name="custom_text" rows="3" placeholder="e.g. 'Happy Birthday Sarah!', 'Established 2024'" style="background: var(--cream); resize: none;"></textarea>
                             </div>
 
                             <!-- File Upload -->
                             <div class="mb-4">
                                 <label class="form-label fw-bold text-dark mb-1">Upload Reference Image (Optional)</label>
                                 <p class="text-secondary small mb-2">Attach a photo or sketch for reference or custom printing.</p>
-                                <input type="file" name="custom_image" class="form-control py-2" style="background: var(--cream);">
+                                <div class="custom-file-upload">
+                                    <input type="file" name="custom_image" id="custom_image" class="d-none">
+                                    <label for="custom_image" class="file-upload-label">
+                                        <i class="fas fa-cloud-upload-alt mb-2 fs-3"></i>
+                                        <span class="d-block fw-medium">Choose a file or drag it here</span>
+                                        <span class="file-name text-secondary small mt-1 d-block">No file selected</span>
+                                    </label>
+                                </div>
                             </div>
 
                             <!-- Quantity & Action -->
-                            <div class="row align-items-end mt-4">
-                                <div class="col-4">
-                                    <label class="form-label fw-bold text-dark">Qty</label>
-                                    <input type="number" name="quantity" value="1" min="1" class="form-control py-2 text-center" style="background: var(--cream);">
+                            <div class="d-flex align-items-end justify-content-between gap-4 mt-5">
+                                <div style="flex-shrink: 0;">
+                                    <label class="form-label fw-bold text-dark mb-2">Quantity</label>
+                                    <div class="quantity-selector">
+                                        <button type="button" class="qty-btn" id="qty-minus"><i class="fas fa-minus"></i></button>
+                                        <input type="number" name="quantity" id="quantity-input" value="1" min="1" class="qty-input">
+                                        <button type="button" class="qty-btn" id="qty-plus"><i class="fas fa-plus"></i></button>
+                                    </div>
                                 </div>
-                                <div class="col-8">
-                                    <button type="submit" class="btn btn-primary-custom w-100 py-3 d-flex align-items-center justify-content-center gap-2" style="height: 54px;">
+                                <div style="flex-grow: 1;">
+                                    <button type="submit" class="btn btn-primary-custom w-100 py-3 d-flex align-items-center justify-content-center gap-2" style="height: 52px; font-size: 1.05rem;">
                                         <i class="fas fa-shopping-cart"></i> Add to Cart
                                     </button>
                                 </div>
@@ -174,14 +325,20 @@ if(!$product) die('Product not found');
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Option buttons click active class handler
-        const optionButtons = document.querySelectorAll('input[type="radio"]');
-        optionButtons.forEach(radio => {
-            radio.addEventListener('change', () => {
-                const group = radio.closest('.d-flex');
-                group.querySelectorAll('label').forEach(label => label.classList.remove('active'));
-                radio.parentElement.classList.add('active');
-            });
+        // File upload custom presentation
+        document.getElementById('custom_image').addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : "No file selected";
+            this.parentElement.querySelector('.file-name').textContent = fileName;
+        });
+
+        // Quantity controls
+        document.getElementById('qty-minus').addEventListener('click', () => {
+            const input = document.getElementById('quantity-input');
+            if (input.value > 1) input.value = parseInt(input.value) - 1;
+        });
+        document.getElementById('qty-plus').addEventListener('click', () => {
+            const input = document.getElementById('quantity-input');
+            input.value = parseInt(input.value) + 1;
         });
     </script>
 </body>
