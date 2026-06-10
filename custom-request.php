@@ -157,8 +157,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script>
         // Trigger fade-up animations
         document.addEventListener("DOMContentLoaded", function() {
-            const el = document.querySelector('.fade-up');
-            if (el) el.style.opacity = 1;
+            const fadeElements = document.querySelectorAll('.fade-up');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            fadeElements.forEach(el => observer.observe(el));
         });
     </script>
 </body>
