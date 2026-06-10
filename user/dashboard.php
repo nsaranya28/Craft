@@ -25,7 +25,12 @@ $requests = $stmt->fetchAll();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | CraftyGifts</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../assets/css/style.css?v=2.0">
     <style>
         .dashboard-layout {
             display: grid;
@@ -37,9 +42,10 @@ $requests = $stmt->fetchAll();
             padding: 2rem;
             height: fit-content;
         }
-        .sidebar ul { list-style: none; }
+        .sidebar ul { list-style: none; padding: 0; }
         .sidebar li { margin-bottom: 1rem; }
-        .sidebar a { display: block; padding: 0.8rem; border-radius: 0.5rem; }
+        .sidebar a { display: block; padding: 0.8rem; border-radius: 0.5rem; text-decoration: none; color: var(--text); }
+        .sidebar a:hover { background: var(--pink-50); color: var(--primary); }
         .sidebar a.active { background: var(--primary); color: white; }
         
         .tab-content { padding: 1rem; }
@@ -59,18 +65,37 @@ $requests = $stmt->fetchAll();
     </style>
 </head>
 <body>
-    <header class="glass">
-        <nav>
-            <a href="../index.php" class="logo">CraftyGifts</a>
-            <ul class="nav-links">
-                <li><a href="../index.php">Home</a></li>
-                <li><a href="../products.php">Shop</a></li>
-            </ul>
-            <div class="nav-btns">
-                <a href="../auth/logout.php" class="btn btn-outline">Logout</a>
+    <!-- Navbar brand with cute ribbon -->
+    <nav class="navbar navbar-expand-lg glass-nav">
+        <div class="container-fluid">
+            <a class="navbar-brand font-serif fs-3 fw-bold text-gradient" href="../index.php">
+                CraftyGifts
+                <svg class="brand-ribbon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="36" height="36" style="color: var(--primary); fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; vertical-align: middle; margin-left: 2px;">
+                    <path d="M32 32 C20 18, 10 24, 16 36 C20 44, 30 36, 32 32 Z" fill="rgba(226, 95, 132, 0.15)"/>
+                    <path d="M32 32 C44 18, 54 24, 48 36 C44 44, 34 36, 32 32 Z" fill="rgba(226, 95, 132, 0.15)"/>
+                    <path d="M28 34 C24 44, 18 50, 20 54 M20 54 C23 54, 25 50, 27 46"/>
+                    <path d="M36 34 C40 44, 46 50, 44 54 M44 54 C41 54, 39 50, 37 46"/>
+                    <circle cx="32" cy="32" r="5" fill="var(--primary)"/>
+                </svg>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars" style="color: var(--primary);"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link fw-medium" href="../index.php">Home</a></li>
+                    <li class="nav-item"><a class="nav-link fw-medium" href="../products.php">Shop</a></li>
+                    <li class="nav-item"><a class="nav-link fw-medium" href="../custom-request.php">Custom Order</a></li>
+                    <li class="nav-item"><a class="nav-link fw-medium" href="../index.php#about">About</a></li>
+                </ul>
+                <div class="d-flex gap-2">
+                    <a href="dashboard.php" class="btn btn-outline-custom">Dashboard</a>
+                    <a href="../auth/logout.php" class="btn btn-primary-custom">Logout</a>
+                </div>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
+    <div class="navbar-scallop-divider"></div>
 
     <main style="padding: 4rem 5%;">
         <div class="dashboard-layout">
@@ -146,5 +171,7 @@ $requests = $stmt->fetchAll();
             </div>
         </div>
     </main>
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
