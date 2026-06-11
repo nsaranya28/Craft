@@ -1,28 +1,63 @@
 <?php
 session_start();
 include 'includes/db.php';
+include 'includes/mailer.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: auth/login.php");
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Process order
-    $user_id = $_SESSION['user_id'];
-    $total = $_POST['total'];
+// ── Order placed successfully after OTP verification ──────────────────────────
+if (isset($_GET['success']) && $_GET['success'] === '1' && isset($_SESSION['order_placed'])) {
+    unset($_SESSION['order_placed']);
+    $success = true;
+    $selected_payment = $_SESSION['payment_method'] ?? 'demo';
+    unset($_SESSION['payment_method']);
+}
+
+// ── OTP failed (too many attempts) ────────────────────────────────────────────
+$otpFail = isset($_GET['otp_fail']) && $_GET['otp_fail'] === '1';
+
+$error = '';
+
+// ── Handle checkout form submission – generate & email OTP ───────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($success)) {
+    $user_id         = $_SESSION['user_id'];
+    $total           = $_POST['total'];
     $shipping_address = trim($_POST['shipping_address'] ?? '');
-    $payment_method = $_POST['payment_method'] ?? 'demo';
+    $payment_method  = $_POST['payment_method'] ?? 'demo';
 
     if (empty($shipping_address)) {
         $error = 'Please enter your shipping address.';
     } else {
-        $stmt = $pdo->prepare("INSERT INTO orders (user_id, total_amount, status, payment_status, shipping_address) VALUES (?, ?, 'ordered', 'paid', ?)");
-        $stmt->execute([$user_id, $total, $shipping_address]);
+        // Save pending order in session
+        $_SESSION['otp_pending_order'] = [
+            'user_id'          => $user_id,
+            'total'            => $total,
+            'shipping_address' => $shipping_address,
+            'payment_method'   => $payment_method,
+        ];
 
-        $_SESSION['cart'] = []; // Clear cart
-        $success = true;
-        $selected_payment = $payment_method;
+        // Generate OTP
+        $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $_SESSION['otp_code']       = $otp;
+        $_SESSION['otp_expires_at'] = time() + 600; // 10 minutes
+        $_SESSION['otp_attempts']   = 0;
+
+        // Fetch user email/name
+        $stmt = $pdo->prepare("SELECT name, email FROM users WHERE id = ?");
+        $stmt->execute([$user_id]);
+        $user = $stmt->fetch();
+
+        $mailSent = $user ? sendOtpEmail($user['email'], $user['name'], $otp) : false;
+
+        if ($mailSent) {
+            header("Location: auth/verify_otp.php");
+            exit;
+        } else {
+            $error = 'Could not send OTP email. Please check your email settings and try again.';
+        }
     }
 }
 
@@ -117,8 +152,17 @@ foreach ($_SESSION['cart'] ?? [] as $item) {
                     <h2 class="font-serif mb-3 text-dark">Complete Your Order</h2>
                     <p class="text-secondary fs-5 mb-4">Total Amount: <span class="price-tag fs-4">₹<?php echo number_format($total, 2); ?></span></p>
 
-                    <?php if (isset($error)): ?>
-                        <div class="alert alert-danger text-start rounded-cute mb-4"><?php echo htmlspecialchars($error); ?></div>
+                    <?php if ($otpFail): ?>
+                        <div class="alert alert-danger text-start rounded-cute mb-4">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            <strong>OTP Verification Failed.</strong> Too many incorrect attempts. Please try placing your order again.
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($error)): ?>
+                        <div class="alert alert-danger text-start rounded-cute mb-4">
+                            <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($error); ?>
+                        </div>
                     <?php endif; ?>
 
                     <form method="POST" class="text-start">
@@ -162,9 +206,20 @@ foreach ($_SESSION['cart'] ?? [] as $item) {
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary-custom btn-lg w-100 py-3 d-flex align-items-center justify-content-center gap-2">
-                            <i class="fas fa-lock me-1"></i> Confirm &amp; Place Order
+                        <!-- OTP notice -->
+                        <div class="alert rounded-cute mb-3 d-flex align-items-center gap-2" style="background:var(--pink-50);border:1px solid var(--pink-200);font-size:0.88rem;color:var(--primary);">
+                            <i class="fas fa-envelope-open-text fa-lg"></i>
+                            <span>A <strong>6-digit OTP</strong> will be sent to your registered email to confirm this order.</span>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom btn-lg w-100 py-3 d-flex align-items-center justify-content-center gap-2" id="checkoutSubmitBtn">
+                            <i class="fas fa-paper-plane me-1"></i> Send OTP &amp; Continue
                         </button>
+                        <script>
+                        document.getElementById('checkoutSubmitBtn').addEventListener('click', function() {
+                            this.disabled = true;
+                            this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending OTP…';
+                        });
+                        </script>
                     </form>
                 <?php endif; ?>
             </div>
