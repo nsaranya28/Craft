@@ -293,6 +293,21 @@ $expiresAt = $_SESSION['otp_expires_at'] ?? (time() + 600);
                         </span>
                     </div>
 
+                    <!-- DEV MODE banner: shows OTP on screen when Gmail is not configured -->
+                    <?php if (!empty($_SESSION['otp_dev_mode'])): ?>
+                        <div class="alert mt-3 rounded-4" style="background:#fff8e1;border:2px dashed #f0b429;color:#7d5a00;" role="alert">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <i class="fas fa-flask"></i>
+                                <strong>Dev Mode — Gmail not configured</strong>
+                            </div>
+                            <p class="mb-1 small">Your OTP for this session is:</p>
+                            <div style="font-size:2rem;font-weight:800;letter-spacing:10px;color:#c94f79;">
+                                <?php echo htmlspecialchars($_SESSION['otp_code']); ?>
+                            </div>
+                            <p class="mb-0 mt-1 small">To send real emails, update <code>includes/mailer.php</code> with your Gmail credentials.</p>
+                        </div>
+                    <?php endif; ?>
+
                     <!-- Alerts -->
                     <?php if ($error): ?>
                         <div class="alert alert-danger rounded-4 mt-3" role="alert" id="alertBox">

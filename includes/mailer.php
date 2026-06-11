@@ -7,6 +7,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 /**
  * Send an OTP email to the given recipient.
+ * If Gmail credentials are still placeholder, falls back to DEV mode
+ * (stores OTP in session so it can be displayed on the verify page).
  *
  * @param string $toEmail  Recipient email address.
  * @param string $toName   Recipient display name.
@@ -22,6 +24,15 @@ function sendOtpEmail(string $toEmail, string $toName, string $otp): bool
     // ──────────────────────────────────────────────────────────────────────
     $smtpUser = 'your_gmail@gmail.com';   // <-- your Gmail
     $smtpPass = 'your_app_password';      // <-- 16-char App Password
+
+    // ── DEV MODE: if credentials are still placeholder, skip email ────────
+    $isDevMode = ($smtpUser === 'your_gmail@gmail.com' || empty($smtpPass));
+    if ($isDevMode) {
+        // OTP is already in $_SESSION['otp_code'] – just flag dev mode
+        $_SESSION['otp_dev_mode'] = true;
+        return true; // pretend success so checkout redirects to verify page
+    }
+    $_SESSION['otp_dev_mode'] = false;
 
     $mail = new PHPMailer(true);
 
