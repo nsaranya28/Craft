@@ -50,13 +50,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($success)) {
         $stmt->execute([$user_id]);
         $user = $stmt->fetch();
 
-        $mailSent = $user ? sendOtpEmail($user['email'], $user['name'], $otp) : false;
+        $mailError = '';
+        $mailSent = $user ? sendOtpEmail($user['email'], $user['name'], $otp, $mailError) : false;
 
         if ($mailSent) {
             header("Location: auth/verify_otp.php");
             exit;
         } else {
-            $error = 'Could not send OTP email. Please check your email settings and try again.';
+            $error = 'Could not send OTP email. ' . htmlspecialchars($mailError);
+            if (strpos($mailError, 'authenticate') !== false) {
+                $error .= '<br><small>Tip: The Gmail App Password in <code>includes/mailer.php</code> may be invalid or expired. Generate a new one at <a href="https://myaccount.google.com/apppasswords" target="_blank">https://myaccount.google.com/apppasswords</a>.</small>';
+            }
         }
     }
 }

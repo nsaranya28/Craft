@@ -15,15 +15,15 @@ require_once __DIR__ . '/../vendor/autoload.php';
  * @param string $otp      6-digit OTP code.
  * @return bool            True on success, false on failure.
  */
-function sendOtpEmail(string $toEmail, string $toName, string $otp): bool
+function sendOtpEmail(string $toEmail, string $toName, string $otp, ?string &$errorInfo = null): bool
 {
     // ──────────────────────────────────────────────────────────────────────
     // TODO: Replace these values with your own Gmail credentials.
     //       Use an App Password (not your regular password).
     //       Gmail → Account → Security → 2-Step Verification → App Passwords
     // ──────────────────────────────────────────────────────────────────────
-    $smtpUser = 'your_gmail@gmail.com';   // <-- your Gmail
-    $smtpPass = 'your_app_password';      // <-- 16-char App Password
+    $smtpUser = 'nsaranya282@gmail.com';   // <-- your Gmail
+    $smtpPass = 'tmkr xjkh jist fznh';      // <-- 16-char App Password
 
     // ── DEV MODE: if credentials are still placeholder, skip email ────────
     $isDevMode = ($smtpUser === 'your_gmail@gmail.com' || empty($smtpPass));
@@ -59,7 +59,8 @@ function sendOtpEmail(string $toEmail, string $toName, string $otp): bool
         $mail->send();
         return true;
     } catch (Exception $e) {
-        error_log('PHPMailer Error: ' . $mail->ErrorInfo);
+        $errorInfo = $mail->ErrorInfo;
+        error_log('PHPMailer Error: ' . $errorInfo);
         return false;
     }
 }

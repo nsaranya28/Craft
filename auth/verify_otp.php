@@ -23,10 +23,11 @@ if (isset($_GET['resend']) && $_GET['resend'] === '1') {
     $stmt->execute([$user_id]);
     $user = $stmt->fetch();
 
-    if ($user && sendOtpEmail($user['email'], $user['name'], $newOtp)) {
+    $mailError = '';
+    if ($user && sendOtpEmail($user['email'], $user['name'], $newOtp, $mailError)) {
         $success = 'A new OTP has been sent to your registered email.';
     } else {
-        $error = 'Failed to resend OTP. Please try again.';
+        $error = 'Failed to resend OTP. ' . htmlspecialchars($mailError);
     }
 }
 
