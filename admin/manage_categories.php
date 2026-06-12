@@ -36,7 +36,7 @@ if (isset($_GET['delete'])) {
 }
 
 // ── Fetch all categories ──────────────────────────────────────────────────
-$categories = $pdo->query("SELECT c.*, (SELECT COUNT(*) FROM products WHERE category_id = c.id) as product_count FROM categories ORDER BY name")->fetchAll();
+$categories = $pdo->query("SELECT c.*, (SELECT COUNT(*) FROM products WHERE category_id = c.id) as product_count FROM categories c ORDER BY name")->fetchAll();
 
 // ── Fetch category for editing ────────────────────────────────────────────
 $editCat = null;
