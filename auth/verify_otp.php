@@ -60,6 +60,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                  VALUES (?, ?, 'ordered', 'paid', ?)"
             );
             $stmt->execute([$order['user_id'], $order['total'], $order['shipping_address']]);
+            $orderId = $pdo->lastInsertId();
+
+            // Save UPI ID if payment is GPay or PhonePe
+            if (!empty($order['upi_id'])) {
+                $stmt = $pdo->prepare("INSERT INTO order_meta (order_id, meta_key, meta_value) VALUES (?, 'upi_id', ?)");
+                $stmt->execute([$orderId, $order['upi_id']]);
+            }
 
             // Clear OTP & pending order data
             unset(
@@ -71,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['cart']         = [];
             $_SESSION['order_placed'] = true;
             $_SESSION['payment_method'] = $order['payment_method'];
+            $_SESSION['upi_id']       = $order['upi_id'] ?? '';
 
             header("Location: ../checkout.php?success=1");
             exit;

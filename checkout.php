@@ -37,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($success)) {
             'total'            => $total,
             'shipping_address' => $shipping_address,
             'payment_method'   => $payment_method,
+            'upi_id'           => in_array($payment_method, ['gpay', 'phonepe']) ? trim($_POST['upi_id'] ?? '') : '',
         ];
 
         // Generate OTP
@@ -147,7 +148,10 @@ foreach ($_SESSION['cart'] ?? [] as $item) {
                     <?php if (!empty($selected_payment) && $selected_payment !== 'demo'): ?>
                         <div class="alert alert-info rounded-cute mb-3" style="font-size:0.9rem;">
                             <i class="fas fa-info-circle me-1"></i>
-                            Payment via <strong><?php echo htmlspecialchars(ucfirst($selected_payment)); ?></strong> is simulated in demo mode. No actual charge was made.
+                            Payment via <strong><?php echo htmlspecialchars(ucfirst($selected_payment)); ?></strong> is simulated. No actual charge was made.
+                            <?php if (!empty($_SESSION['upi_id'])): ?>
+                                <br><small>UPI ID: <?php echo htmlspecialchars($_SESSION['upi_id']); ?></small>
+                            <?php endif; ?>
                         </div>
                     <?php endif; ?>
                     <p class="text-secondary mb-4 pb-3 border-bottom">You can track your order status in your dashboard.</p>
@@ -210,6 +214,13 @@ foreach ($_SESSION['cart'] ?? [] as $item) {
                             </div>
                         </div>
 
+                        <!-- Payment Details (UPI / GPay / PhonePe) -->
+                        <div id="paymentDetails" class="mb-4" style="display:none;">
+                            <h5 class="font-serif mb-2 text-dark"><i class="fas fa-mobile-alt me-2" style="color:var(--primary);"></i>UPI Details</h5>
+                            <input type="text" name="upi_id" class="form-control border-pink rounded-cute" placeholder="Enter your UPI ID (e.g. name@upi)">
+                            <small class="text-secondary">We'll send a payment request to this UPI ID.</small>
+                        </div>
+
                         <!-- OTP notice -->
                         <div class="alert rounded-cute mb-3 d-flex align-items-center gap-2" style="background:var(--pink-50);border:1px solid var(--pink-200);font-size:0.88rem;color:var(--primary);">
                             <i class="fas fa-envelope-open-text fa-lg"></i>
@@ -219,6 +230,21 @@ foreach ($_SESSION['cart'] ?? [] as $item) {
                             <i class="fas fa-paper-plane me-1"></i> Send OTP &amp; Continue
                         </button>
                         <script>
+                        // ── Show/hide UPI field based on payment method ─────
+                        document.querySelectorAll('input[name="payment_method"]').forEach(function(radio) {
+                            radio.addEventListener('change', function() {
+                                var details = document.getElementById('paymentDetails');
+                                details.style.display = (this.value === 'gpay' || this.value === 'phonepe') ? 'block' : 'none';
+                                var upiInput = details.querySelector('input[name="upi_id"]');
+                                if (details.style.display === 'block') {
+                                    upiInput.setAttribute('required', '');
+                                } else {
+                                    upiInput.removeAttribute('required');
+                                    upiInput.value = '';
+                                }
+                            });
+                        });
+
                         document.getElementById('checkoutSubmitBtn').addEventListener('click', function(e) {
                             var form = this.closest('form');
                             if (form.checkValidity()) {
