@@ -8,6 +8,12 @@ $currentFile = basename($_SERVER['PHP_SELF']);
                             </a>
                         </li>
                         <li>
+                            <a href="manage_categories.php" class="<?php echo $currentFile === 'manage_categories.php' ? 'active' : ''; ?>">
+                                <i class="fa-solid fa-tags"></i>
+                                Manage Categories
+                            </a>
+                        </li>
+                        <li>
                             <a href="manage_products.php" class="<?php echo $currentFile === 'manage_products.php' || $currentFile === 'edit_product.php' ? 'active' : ''; ?>">
                                 <i class="fa-solid fa-boxes-stacked"></i>
                                 Manage Products
