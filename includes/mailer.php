@@ -22,8 +22,8 @@ function sendOtpEmail(string $toEmail, string $toName, string $otp, ?string &$er
     //       Use an App Password (not your regular password).
     //       Gmail → Account → Security → 2-Step Verification → App Passwords
     // ──────────────────────────────────────────────────────────────────────
-    $smtpUser = 'your_gmail@gmail.com';   // <-- your Gmail
-    $smtpPass = '';                          // <-- 16-char App Password
+    $smtpUser = 'nsaranya282@gmail.com';   // <-- your Gmail
+    $smtpPass = 'rbhy afcq ktll ssnh';      // <-- 16-char App Password
 
     // ── DEV MODE: if credentials are still placeholder, skip email ────────
     $isDevMode = ($smtpUser === 'your_gmail@gmail.com' || empty($smtpPass));
