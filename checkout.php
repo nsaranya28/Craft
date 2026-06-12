@@ -219,9 +219,14 @@ foreach ($_SESSION['cart'] ?? [] as $item) {
                             <i class="fas fa-paper-plane me-1"></i> Send OTP &amp; Continue
                         </button>
                         <script>
-                        document.getElementById('checkoutSubmitBtn').addEventListener('click', function() {
-                            this.disabled = true;
-                            this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending OTP…';
+                        document.getElementById('checkoutSubmitBtn').addEventListener('click', function(e) {
+                            var form = this.closest('form');
+                            if (form.checkValidity()) {
+                                setTimeout(function(btn) {
+                                    btn.disabled = true;
+                                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending OTP…';
+                                }, 100, this);
+                            }
                         });
                         </script>
                     </form>
