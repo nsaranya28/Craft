@@ -27,244 +27,249 @@ if (!isAdminLoggedIn()) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <!-- Custom Admin Styles -->
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
         :root {
-            --primary-pink: hsl(340, 75%, 92%);
-            --primary-pink-dark: hsl(340, 70%, 75%);
-            --secondary-lavender: hsl(265, 60%, 93%);
-            --accent-purple: #7C4DFF;
-            --accent-pink: #E8628C;
-            --text-dark: #2A2F35;
-            --text-muted: #6C7A89;
+            --primary: #E25F84;
+            --primary-light: #F2A1B7;
+            --primary-dark: #C44E6F;
+            --text: #442E3C;
+            --text-light: #9E8394;
+            --white: #FFFFFF;
+            --cream: #FFFBFB;
+            --pink-50: #FFF3F5;
+            --pink-100: #FFE4EA;
+            --pink-200: #FBC5D2;
+            --pink-300: #F4A2B8;
+            --pink-400: #EB7A96;
+            --pink-500: #E25F84;
             --bg-glass: rgba(255, 255, 255, 0.45);
-            --bg-glass-card: rgba(255, 255, 255, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.5);
+            --bg-glass-card: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(232, 98, 140, 0.12);
             --shadow-soft: 0 10px 30px rgba(232, 98, 140, 0.08);
             --shadow-hover: 0 15px 35px rgba(232, 98, 140, 0.15);
         }
 
         body {
-            background: linear-gradient(135deg, var(--primary-pink), var(--secondary-lavender));
-            color: var(--text-dark);
-            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #fdf4f7 0%, #fce4ee 50%, #f3e8ff 100%);
+            color: var(--text);
+            font-family: 'Poppins', sans-serif;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
+            position: relative;
+        }
+        body::before {
+            content: '♡';
+            position: fixed;
+            top: 5%; left: 3%;
+            font-size: 3rem;
+            color: var(--pink-200);
+            opacity: 0.12;
+            animation: float 8s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::after {
+            content: '✦';
+            position: fixed;
+            bottom: 8%; right: 5%;
+            font-size: 2rem;
+            color: var(--pink-200);
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite 2s;
+            pointer-events: none;
+            z-index: 0;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        h1, h2, h3, h4, h5, h6, .font-serif {
+            font-family: 'Playfair Display', serif;
         }
 
-        /* Navbar Glassmorphism */
+        /* Navbar */
         .admin-navbar {
             backdrop-filter: blur(15px);
-            background: var(--bg-glass);
+            background: rgba(255,255,255,0.85);
             border-bottom: 1px solid var(--glass-border);
             padding: 1rem 2rem;
             z-index: 100;
+            position: relative;
         }
-
         .admin-navbar .logo {
             font-family: 'Playfair Display', serif;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 1.5rem;
-            color: var(--text-dark);
             text-decoration: none;
-            background: linear-gradient(45deg, var(--accent-pink), var(--accent-purple));
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: inline-block;
         }
 
-        /* Sidebar Glassmorphism */
+        /* Sidebar */
         .sidebar-card {
             backdrop-filter: blur(15px);
             background: var(--bg-glass-card);
             border: 1px solid var(--glass-border);
-            border-radius: 20px;
+            border-radius: 24px;
             box-shadow: var(--shadow-soft);
             padding: 1.5rem;
             height: calc(100vh - 120px);
             position: sticky;
             top: 100px;
         }
-
         .sidebar-nav {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-
-        .sidebar-nav li {
-            margin-bottom: 0.8rem;
-        }
-
+        .sidebar-nav li { margin-bottom: 0.6rem; }
         .sidebar-nav a {
             display: flex;
             align-items: center;
             gap: 1rem;
-            padding: 0.8rem 1.2rem;
-            color: var(--text-dark);
+            padding: 0.75rem 1.1rem;
+            color: var(--text);
             text-decoration: none;
             font-weight: 500;
-            border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.9rem;
+            border-radius: 14px;
+            transition: all 0.3s ease;
         }
-
-        .sidebar-nav a i {
-            font-size: 1.15rem;
-            color: var(--text-muted);
-            transition: color 0.3s;
-        }
-
+        .sidebar-nav a i { font-size: 1.05rem; color: var(--text-light); transition: color 0.3s; }
         .sidebar-nav a:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: translateX(5px);
-            color: var(--accent-pink);
+            background: var(--pink-50);
+            transform: translateX(4px);
+            color: var(--primary);
         }
-
-        .sidebar-nav a:hover i {
-            color: var(--accent-pink);
-        }
-
+        .sidebar-nav a:hover i { color: var(--primary); }
         .sidebar-nav a.active {
-            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
-            box-shadow: 0 4px 15px rgba(232, 98, 140, 0.3);
+            box-shadow: 0 4px 15px rgba(232,98,140,0.25);
         }
+        .sidebar-nav a.active i { color: white; }
 
-        .sidebar-nav a.active i {
-            color: white;
-        }
-
-        /* Content Area Glassmorphism */
+        /* Glass Card */
         .glass-card {
             backdrop-filter: blur(15px);
             background: var(--bg-glass-card);
             border: 1px solid var(--glass-border);
-            border-radius: 20px;
+            border-radius: 24px;
             box-shadow: var(--shadow-soft);
-            padding: 2rem;
+            padding: 1.75rem;
             transition: all 0.3s ease;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
         }
-
-        .glass-card:hover {
-            box-shadow: var(--shadow-hover);
-        }
+        .glass-card:hover { box-shadow: var(--shadow-hover); }
 
         .stat-icon-wrapper {
-            width: 50px;
-            height: 50px;
-            border-radius: 15px;
+            width: 52px; height: 52px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             margin-bottom: 1rem;
         }
 
-        /* Button styles */
+        /* Buttons */
         .btn-premium {
-            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
             border: none;
             border-radius: 12px;
             padding: 0.6rem 1.5rem;
             font-weight: 500;
-            box-shadow: 0 4px 15px rgba(232, 98, 140, 0.2);
+            box-shadow: 0 4px 15px rgba(232,98,140,0.2);
             transition: all 0.3s;
         }
         .btn-premium:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(232, 98, 140, 0.35);
+            box-shadow: 0 6px 20px rgba(232,98,140,0.35);
             color: white;
         }
-
         .btn-premium-outline {
             background: transparent;
-            color: var(--text-dark);
-            border: 2px solid var(--glass-border);
+            color: var(--text);
+            border: 2px solid var(--pink-200);
             border-radius: 12px;
             padding: 0.5rem 1.4rem;
             font-weight: 500;
             transition: all 0.3s;
         }
         .btn-premium-outline:hover {
-            background: var(--bg-glass);
-            border-color: var(--accent-pink);
-            color: var(--accent-pink);
+            background: var(--pink-50);
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
-        /* Tables styling */
+        /* Tables */
         .custom-table {
             border-collapse: separate;
             border-spacing: 0 8px;
             width: 100%;
         }
-
         .custom-table th {
             border: none;
-            color: var(--text-muted);
+            color: var(--text-light);
             font-weight: 600;
-            padding: 1rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0.8rem 1rem;
         }
-
-        .custom-table tr {
-            transition: transform 0.2s;
-        }
-
         .custom-table tbody tr {
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.01);
+            background: rgba(255,255,255,0.5);
+            border-radius: 14px;
+            transition: all 0.2s;
         }
-
         .custom-table tbody tr:hover {
             transform: scale(1.005);
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255,255,255,0.8);
         }
-
         .custom-table td {
             border: none;
-            padding: 1.2rem 1rem;
+            padding: 1rem;
             vertical-align: middle;
         }
-
-        .custom-table td:first-child, .custom-table th:first-child {
-            border-top-left-radius: 12px;
-            border-bottom-left-radius: 12px;
-        }
-
-        .custom-table td:last-child, .custom-table th:last-child {
-            border-top-right-radius: 12px;
-            border-bottom-right-radius: 12px;
-        }
+        .custom-table td:first-child, .custom-table th:first-child { border-radius: 14px 0 0 14px; }
+        .custom-table td:last-child, .custom-table th:last-child { border-radius: 0 14px 14px 0; }
 
         /* Status Pills */
         .badge-status {
-            padding: 0.4rem 0.8rem;
-            border-radius: 10px;
-            font-size: 0.8rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.72rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             display: inline-block;
         }
+        .status-ordered { background: #e0f2fe; color: #0369a1; }
+        .status-processing { background: #fef3c7; color: #d97706; }
+        .status-shipped { background: #f3e8ff; color: #7e22ce; }
+        .status-delivered { background: #dcfce7; color: #15803d; }
+        .status-cancelled { background: #fee2e2; color: #b91c1c; }
+        .status-paid { background: #dcfce7; color: #15803d; }
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-failed { background: #fee2e2; color: #b91c1c; }
 
-        .status-ordered { background-color: #e0f2fe; color: #0369a1; }
-        .status-processing { background-color: #fef3c7; color: #d97706; }
-        .status-shipped { background-color: #f3e8ff; color: #7e22ce; }
-        .status-delivered { background-color: #dcfce7; color: #15803d; }
-        .status-cancelled { background-color: #fee2e2; color: #b91c1c; }
-
-        .status-paid { background-color: #dcfce7; color: #15803d; }
-        .status-pending { background-color: #fef3c7; color: #d97706; }
-        .status-failed { background-color: #fee2e2; color: #b91c1c; }
+        .uppercase { text-transform: uppercase; }
+        .tracking-wider { letter-spacing: 1px; }
     </style>
 </head>
 <body>
     <header class="admin-navbar shadow-sm">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <a href="dashboard.php" class="logo">
-                CraftyGifts <span style="font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 500; vertical-align: middle; opacity: 0.85; margin-left: 5px;">Admin Control Panel</span>
+                CraftyGifts <span style="font-size: 0.85rem; font-weight: 500; vertical-align: middle; opacity: 0.85; margin-left: 5px;">Admin Control Panel</span>
             </a>
             <div class="d-flex align-items-center gap-3">
                 <span class="text-dark small d-none d-md-inline"><i class="fa-regular fa-user me-2"></i>Logged in as: <strong><?php echo htmlspecialchars($_SESSION['admin_email'] ?? 'Admin'); ?></strong></span>
@@ -277,5 +282,5 @@ if (!isAdminLoggedIn()) {
         <div class="row">
             <div class="col-lg-3 col-md-4 mb-4">
                 <div class="sidebar-card">
-                    <h5 class="mb-4 text-muted small uppercase fw-bold tracking-wider">Navigation</h5>
+                    <h5 class="mb-4 small fw-semibold text-uppercase" style="letter-spacing: 1px; color: var(--text-light);">Menu</h5>
                     <ul class="sidebar-nav">
