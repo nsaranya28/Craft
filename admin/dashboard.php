@@ -19,6 +19,7 @@ try {
     $revenue = 0;
     $recentOrders = [];
 }
+?>
 
 <div class="container-fluid p-0">
     <!-- Welcome Header -->
