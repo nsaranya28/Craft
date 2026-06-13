@@ -51,7 +51,7 @@ if (!isAdminLoggedIn()) {
         }
 
         body {
-            background: linear-gradient(135deg, #fdf4f7 0%, #fce4ee 50%, #f3e8ff 100%);
+            background: linear-gradient(135deg, #fdf4f7 0%, #fce4ee 50%, #ffe0f0 100%);
             color: var(--text);
             font-family: 'Poppins', sans-serif;
             min-height: 100vh;
@@ -60,31 +60,58 @@ if (!isAdminLoggedIn()) {
             overflow-x: hidden;
             position: relative;
         }
+        /* Floating hearts & bows */
         body::before {
             content: '♡';
             position: fixed;
             top: 5%; left: 3%;
             font-size: 3rem;
             color: var(--pink-200);
-            opacity: 0.12;
-            animation: float 8s ease-in-out infinite;
+            opacity: 0.15;
+            animation: floatHeart 8s ease-in-out infinite;
             pointer-events: none;
             z-index: 0;
         }
         body::after {
-            content: '✦';
+            content: '🎀';
             position: fixed;
             bottom: 8%; right: 5%;
             font-size: 2rem;
             color: var(--pink-200);
-            opacity: 0.1;
-            animation: float 6s ease-in-out infinite 2s;
+            opacity: 0.12;
+            animation: floatBow 6s ease-in-out infinite 2s;
             pointer-events: none;
             z-index: 0;
         }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+        .deco-heart-1 {
+            content: '♥';
+            position: fixed;
+            top: 20%; right: 4%;
+            font-size: 1.8rem;
+            color: var(--pink-200);
+            opacity: 0.1;
+            animation: floatHeart 7s ease-in-out infinite 1s;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .deco-heart-2 {
+            content: '♡';
+            position: fixed;
+            bottom: 30%; left: 5%;
+            font-size: 1.5rem;
+            color: var(--pink-300);
+            opacity: 0.08;
+            animation: floatBow 9s ease-in-out infinite 3s;
+            pointer-events: none;
+            z-index: 0;
+        }
+        @keyframes floatHeart {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-18px) scale(1.05); }
+        }
+        @keyframes floatBow {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(5deg); }
         }
         h1, h2, h3, h4, h5, h6, .font-serif {
             font-family: 'Playfair Display', serif;
@@ -109,6 +136,14 @@ if (!isAdminLoggedIn()) {
             -webkit-text-fill-color: transparent;
             display: inline-block;
         }
+        .admin-navbar .logo::before {
+            content: '♥ ';
+            font-size: 1rem;
+        }
+        .admin-navbar .logo::after {
+            content: ' ♥';
+            font-size: 1rem;
+        }
 
         /* Sidebar */
         .sidebar-card {
@@ -121,6 +156,25 @@ if (!isAdminLoggedIn()) {
             height: calc(100vh - 120px);
             position: sticky;
             top: 100px;
+            overflow: hidden;
+        }
+        .sidebar-card::before {
+            content: '🎀';
+            position: absolute;
+            top: -5px; right: -5px;
+            font-size: 1.2rem;
+            opacity: 0.2;
+            transform: rotate(15deg);
+            pointer-events: none;
+        }
+        .sidebar-card::after {
+            content: '♥';
+            position: absolute;
+            bottom: 10px; left: 10px;
+            font-size: 0.9rem;
+            color: var(--pink-200);
+            opacity: 0.15;
+            pointer-events: none;
         }
         .sidebar-nav {
             list-style: none;
@@ -166,8 +220,29 @@ if (!isAdminLoggedIn()) {
             margin-bottom: 1.5rem;
             position: relative;
             z-index: 1;
+            overflow: hidden;
         }
         .glass-card:hover { box-shadow: var(--shadow-hover); }
+        .glass-card::after {
+            content: '♡';
+            position: absolute;
+            bottom: 8px; right: 12px;
+            font-size: 0.8rem;
+            color: var(--pink-200);
+            opacity: 0.15;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .glass-card:hover::after {
+            opacity: 0.3;
+            animation: heartbeat 1s ease-in-out;
+        }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.15); }
+            50% { transform: scale(1.1); }
+            75% { transform: scale(1.15); }
+        }
 
         .stat-icon-wrapper {
             width: 52px; height: 52px;
@@ -266,6 +341,8 @@ if (!isAdminLoggedIn()) {
     </style>
 </head>
 <body>
+    <div class="deco-heart-1">♥</div>
+    <div class="deco-heart-2">♡</div>
     <header class="admin-navbar shadow-sm">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <a href="dashboard.php" class="logo">
@@ -282,5 +359,5 @@ if (!isAdminLoggedIn()) {
         <div class="row">
             <div class="col-lg-3 col-md-4 mb-4">
                 <div class="sidebar-card">
-                    <h5 class="mb-4 small fw-semibold text-uppercase" style="letter-spacing: 1px; color: var(--text-light);">Menu</h5>
+                    <h5 class="mb-4 small fw-semibold text-uppercase" style="letter-spacing: 1px; color: var(--text-light);">🎀 Menu ♡</h5>
                     <ul class="sidebar-nav">

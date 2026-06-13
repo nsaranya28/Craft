@@ -56,20 +56,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 4rem;
             color: #FBC5D2;
             opacity: 0.15;
-            animation: float 8s ease-in-out infinite;
+            animation: floatHeart 8s ease-in-out infinite;
         }
         body::after {
-            content: '✦';
+            content: '🎀';
             position: fixed;
             bottom: 10%; right: 6%;
             font-size: 3rem;
             color: #FBC5D2;
             opacity: 0.12;
-            animation: float 6s ease-in-out infinite 2s;
+            animation: floatBow 6s ease-in-out infinite 2s;
         }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+        .deco-heart-login {
+            position: fixed;
+            top: 30%; right: 8%;
+            font-size: 2.5rem;
+            color: #FBC5D2;
+            opacity: 0.1;
+            animation: floatHeart 7s ease-in-out infinite 1s;
+            pointer-events: none;
+        }
+        .deco-heart-login2 {
+            position: fixed;
+            bottom: 25%; left: 8%;
+            font-size: 2rem;
+            color: #F4A2B8;
+            opacity: 0.08;
+            animation: floatBow 9s ease-in-out infinite 3s;
+            pointer-events: none;
+        }
+        @keyframes floatHeart {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-18px) scale(1.05); }
+        }
+        @keyframes floatBow {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(5deg); }
         }
 
         .login-card {
@@ -83,6 +105,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             max-width: 92vw;
             position: relative;
             z-index: 1;
+            overflow: hidden;
+        }
+        .login-card::after {
+            content: '♡';
+            position: absolute;
+            bottom: 10px; right: 15px;
+            font-size: 1rem;
+            color: #FBC5D2;
+            opacity: 0.15;
+            pointer-events: none;
         }
         .login-logo {
             font-family: 'Playfair Display', serif;
@@ -92,6 +124,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: linear-gradient(135deg, #E25F84, #F2A1B7);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+        .login-logo::before {
+            content: '♥ ';
+            font-size: 1.2rem;
+        }
+        .login-logo::after {
+            content: ' ♥';
+            font-size: 1.2rem;
         }
         .login-subtitle {
             color: #9E8394;
@@ -144,6 +184,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body>
+    <div class="deco-heart-login">♥</div>
+    <div class="deco-heart-login2">♡</div>
     <div class="login-card">
         <div class="login-logo">CraftyGifts</div>
         <p class="login-subtitle">Admin Control Panel</p>

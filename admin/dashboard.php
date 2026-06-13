@@ -25,7 +25,7 @@ try {
     <!-- Welcome Header -->
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <div>
-            <h2 class="fw-bold mb-1" style="font-family: 'Playfair Display', serif;">Welcome back, <span style="background: linear-gradient(135deg, var(--primary), var(--primary-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Admin</span></h2>
+            <h2 class="fw-bold mb-1" style="font-family: 'Playfair Display', serif;">♡ Welcome back, <span style="background: linear-gradient(135deg, var(--primary), var(--primary-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Admin</span> ♡</h2>
             <p class="text-muted mb-0" style="color: var(--text-light) !important;"><i class="fa-regular fa-calendar me-2"></i><?php echo date('l, F j, Y'); ?></p>
         </div>
         <a href="manage_orders.php" class="btn btn-premium"><i class="fa-solid fa-truck me-2"></i>Manage Deliveries</a>
@@ -83,7 +83,7 @@ try {
                     <div class="stat-icon-wrapper mx-auto" style="background: linear-gradient(135deg, var(--pink-100), var(--pink-200)); color: var(--primary); width: 60px; height: 60px;">
                         <i class="fa-solid fa-box"></i>
                     </div>
-                    <h5 class="fw-bold mt-3 mb-1 text-dark" style="font-family: 'Playfair Display', serif;">Manage Products</h5>
+                    <h5 class="fw-bold mt-3 mb-1 text-dark" style="font-family: 'Playfair Display', serif;">♥ Manage Products ♥</h5>
                     <p class="small mb-0" style="color: var(--text-light);">Add or edit your craft items</p>
                 </div>
             </a>
@@ -94,7 +94,7 @@ try {
                     <div class="stat-icon-wrapper mx-auto" style="background: linear-gradient(135deg, #e8e0ff, #d4c8ff); color: #6c4dff; width: 60px; height: 60px;">
                         <i class="fa-solid fa-tags"></i>
                     </div>
-                    <h5 class="fw-bold mt-3 mb-1 text-dark" style="font-family: 'Playfair Display', serif;">Manage Categories</h5>
+                    <h5 class="fw-bold mt-3 mb-1 text-dark" style="font-family: 'Playfair Display', serif;">♡ Categories ♡</h5>
                     <p class="small mb-0" style="color: var(--text-light);">Organize your collections</p>
                 </div>
             </a>
@@ -105,7 +105,7 @@ try {
                     <div class="stat-icon-wrapper mx-auto" style="background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #15803d; width: 60px; height: 60px;">
                         <i class="fa-solid fa-truck-fast"></i>
                     </div>
-                    <h5 class="fw-bold mt-3 mb-1 text-dark" style="font-family: 'Playfair Display', serif;">Manage Orders</h5>
+                    <h5 class="fw-bold mt-3 mb-1 text-dark" style="font-family: 'Playfair Display', serif;">♥ Orders ♥</h5>
                     <p class="small mb-0" style="color: var(--text-light);">Track and fulfill orders</p>
                 </div>
             </a>
@@ -116,7 +116,7 @@ try {
     <div class="glass-card">
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
             <div>
-                <h4 class="fw-bold mb-1" style="font-family: 'Playfair Display', serif;">Recent Orders</h4>
+                <h4 class="fw-bold mb-1" style="font-family: 'Playfair Display', serif;">♥ Recent Orders ♥</h4>
                 <p class="small mb-0" style="color: var(--text-light);">Overview of the last 5 placed customer orders</p>
             </div>
             <a href="manage_orders.php" class="btn btn-premium btn-sm"><i class="fa-solid fa-list-check me-2"></i>View All Orders</a>
