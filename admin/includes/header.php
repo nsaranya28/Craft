@@ -182,6 +182,21 @@ if (!isAdminLoggedIn()) {
             margin: 0;
         }
         .sidebar-nav li { margin-bottom: 0.6rem; }
+        .sidebar-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-light);
+            padding: 0.5rem 0.2rem 0.2rem;
+            font-weight: 600;
+        }
+        .sidebar-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--pink-200), transparent);
+            margin: 0.8rem 0;
+            opacity: 0.3;
+            list-style: none;
+        }
         .sidebar-nav a {
             display: flex;
             align-items: center;

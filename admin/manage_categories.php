@@ -7,133 +7,111 @@ require_once __DIR__ . '/../includes/db.php';
 $error = '';
 $success = '';
 
-// ── Handle Add / Edit ─────────────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save'])) {
     $id          = (int) ($_POST['id'] ?? 0);
     $name        = trim($_POST['name'] ?? '');
     $description = trim($_POST['description'] ?? '');
-
     if (empty($name)) {
         $error = 'Category name is required.';
     } else {
         if ($id) {
             $stmt = $pdo->prepare("UPDATE categories SET name = ?, description = ? WHERE id = ?");
             $stmt->execute([$name, $description, $id]);
-            $success = 'Category updated successfully.';
+            $success = "Category updated.";
         } else {
             $stmt = $pdo->prepare("INSERT INTO categories (name, description) VALUES (?, ?)");
             $stmt->execute([$name, $description]);
-            $success = 'Category added successfully.';
+            $success = "Category added.";
         }
     }
 }
 
-// ── Handle Delete ─────────────────────────────────────────────────────────
 if (isset($_GET['delete'])) {
     $id = (int) $_GET['delete'];
     $pdo->prepare("DELETE FROM categories WHERE id = ?")->execute([$id]);
-    $success = 'Category deleted successfully.';
+    header('Location: manage_categories.php');
+    exit;
 }
 
-// ── Fetch all categories ──────────────────────────────────────────────────
-$categories = $pdo->query("SELECT c.*, (SELECT COUNT(*) FROM products WHERE category_id = c.id) as product_count FROM categories c ORDER BY name")->fetchAll();
-
-// ── Fetch category for editing ────────────────────────────────────────────
 $editCat = null;
 if (isset($_GET['edit'])) {
     $stmt = $pdo->prepare("SELECT * FROM categories WHERE id = ?");
     $stmt->execute([(int) $_GET['edit']]);
     $editCat = $stmt->fetch();
 }
+
+$categories = $pdo->query("SELECT c.*, COUNT(p.id) as product_count FROM categories c LEFT JOIN products p ON c.id = p.category_id GROUP BY c.id ORDER BY c.name")->fetchAll();
+
+$pageTitle = 'Categories';
+include 'includes/header.php';
+include 'includes/sidebar.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Categories | Admin</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/style.css">
-</head>
-<body>
-    <?php include __DIR__ . '/includes/header.php'; ?>
-    <div class="container-fluid px-4 py-4">
-        <div class="row justify-content-center">
-            <?php include __DIR__ . '/includes/sidebar.php'; ?>
 
-            <div class="col-lg-9 col-md-8">
-                <h2 class="fw-bold mb-4">Manage Categories</h2>
-
-                <?php if ($error): ?>
-                    <div class="alert alert-danger rounded-4"><?php echo $error; ?></div>
-                <?php endif; ?>
-                <?php if ($success): ?>
-                    <div class="alert alert-success rounded-4"><?php echo $success; ?></div>
-                <?php endif; ?>
-
-                <!-- Add / Edit Form -->
-                <div class="card rounded-4 shadow-sm border-0 mb-4">
-                    <div class="card-body p-4">
-                        <h5 class="fw-bold mb-3"><?php echo $editCat ? 'Edit Category' : 'Add New Category'; ?></h5>
-                        <form method="POST">
-                            <input type="hidden" name="id" value="<?php echo $editCat['id'] ?? '0'; ?>">
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <input type="text" name="name" class="form-control rounded-3" placeholder="Category name" value="<?php echo htmlspecialchars($editCat['name'] ?? ''); ?>" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" name="description" class="form-control rounded-3" placeholder="Short description (optional)" value="<?php echo htmlspecialchars($editCat['description'] ?? ''); ?>">
-                                </div>
-                                <div class="col-md-2">
-                                    <button type="submit" name="save" class="btn btn-primary w-100 rounded-3">
-                                        <?php echo $editCat ? 'Update' : 'Add'; ?>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Categories Table -->
-                <div class="card rounded-4 shadow-sm border-0">
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th class="ps-4">ID</th>
-                                        <th>Name</th>
-                                        <th>Description</th>
-                                        <th>Products</th>
-                                        <th class="pe-4 text-end">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($categories as $cat): ?>
-                                        <tr>
-                                            <td class="ps-4 fw-semibold"><?php echo $cat['id']; ?></td>
-                                            <td><?php echo htmlspecialchars($cat['name']); ?></td>
-                                            <td class="text-secondary"><?php echo htmlspecialchars($cat['description'] ?? ''); ?></td>
-                                            <td><span class="badge bg-light text-dark border"><?php echo $cat['product_count']; ?></span></td>
-                                            <td class="pe-4 text-end">
-                                                <a href="?edit=<?php echo $cat['id']; ?>" class="btn btn-sm btn-outline-secondary rounded-3 me-1"><i class="fa-solid fa-pen"></i></a>
-                                                <a href="?delete=<?php echo $cat['id']; ?>" class="btn btn-sm btn-outline-danger rounded-3" onclick="return confirm('Delete this category? Products will become uncategorized.');"><i class="fa-solid fa-trash"></i></a>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                    <?php if (empty($categories)): ?>
-                                        <tr><td colspan="5" class="text-center text-secondary py-4">No categories yet. Add one above.</td></tr>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="container-fluid p-0">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-family: 'Playfair Display', serif;">♡ Categories ♡</h2>
+            <p style="color: var(--text-light); margin: 0;">Organize your product collections</p>
         </div>
     </div>
-</body>
-</html>
+
+    <?php if ($error): ?>
+        <div class="alert alert-danger py-2" style="border-radius: 14px; border: none;"><?php echo htmlspecialchars($error); ?></div>
+    <?php elseif ($success): ?>
+        <div class="alert alert-success py-2" style="border-radius: 14px; border: none;"><?php echo htmlspecialchars($success); ?></div>
+    <?php endif; ?>
+
+    <!-- Add / Edit Form -->
+    <div class="glass-card mb-4">
+        <h5 class="fw-bold mb-3" style="font-family: 'Playfair Display', serif;"><?php echo $editCat ? '♥ Edit Category ♥' : '♥ Add New Category ♥'; ?></h5>
+        <form method="POST">
+            <input type="hidden" name="id" value="<?php echo $editCat['id'] ?? '0'; ?>">
+            <div class="row g-2">
+                <div class="col-md-5">
+                    <input type="text" name="name" class="form-control" placeholder="Category name" value="<?php echo htmlspecialchars($editCat['name'] ?? ''); ?>" required>
+                </div>
+                <div class="col-md-5">
+                    <input type="text" name="description" class="form-control" placeholder="Short description (optional)" value="<?php echo htmlspecialchars($editCat['description'] ?? ''); ?>">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" name="save" class="btn btn-premium w-100"><?php echo $editCat ? 'Update' : 'Add'; ?></button>
+                </div>
+            </div>
+            <?php if ($editCat): ?>
+                <a href="manage_categories.php" class="btn btn-premium-outline btn-sm mt-2">Cancel Edit</a>
+            <?php endif; ?>
+        </form>
+    </div>
+
+    <!-- Categories Table -->
+    <div class="glass-card">
+        <div class="table-responsive">
+            <table class="custom-table">
+                <thead>
+                    <tr><th>ID</th><th>Name</th><th>Description</th><th>Products</th><th style="width: 120px;">Actions</th></tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($categories as $cat): ?>
+                        <tr>
+                            <td class="fw-semibold">#<?php echo $cat['id']; ?></td>
+                            <td class="fw-semibold"><?php echo htmlspecialchars($cat['name']); ?></td>
+                            <td style="color: var(--text-light); font-size: 0.85rem;"><?php echo htmlspecialchars($cat['description'] ?? '—'); ?></td>
+                            <td><span class="badge" style="background: var(--pink-50); color: var(--primary);"><?php echo $cat['product_count']; ?></span></td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <a href="?edit=<?php echo $cat['id']; ?>" class="btn btn-premium-outline btn-sm py-1 px-2"><i class="fa-solid fa-pen"></i></a>
+                                    <a href="?delete=<?php echo $cat['id']; ?>" class="btn btn-sm py-1 px-2" style="background: #fee2e2; color: #b91c1c; border: none; border-radius: 10px;" onclick="return confirm('Delete this category?');"><i class="fa-solid fa-trash"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    <?php if (empty($categories)): ?>
+                        <tr><td colspan="5" class="text-center py-4" style="color: var(--text-light);">No categories yet ♡</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<?php include 'includes/footer.php'; ?>

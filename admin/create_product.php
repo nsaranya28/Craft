@@ -78,89 +78,75 @@ include 'includes/header.php';
 include 'includes/sidebar.php';
 ?>
 
-<div class="glass-card">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="container-fluid p-0">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <div>
-            <h4 class="fw-bold mb-1">Add New Product</h4>
-            <p class="text-muted small mb-0">Fill out details to list a new handcrafted product</p>
+            <h2 class="fw-bold mb-1" style="font-family: 'Playfair Display', serif;">♥ Add New Product ♥</h2>
+            <p style="color: var(--text-light); margin: 0;">List a new handcrafted gift</p>
         </div>
-        <a href="manage_products.php" class="btn btn-premium-outline btn-sm"><i class="fa-solid fa-arrow-left me-2"></i>Back to Products</a>
+        <a href="manage_products.php" class="btn btn-premium-outline btn-sm"><i class="fa-solid fa-arrow-left me-1"></i>Back</a>
     </div>
 
     <?php if ($success): ?>
-        <div class="alert alert-success d-flex align-items-center" role="alert">
-            <i class="fa-solid fa-circle-check me-2"></i>
-            <div><?php echo $success; ?></div>
-        </div>
+        <div class="alert alert-success py-2" style="border-radius: 14px; border: none;"><?php echo $success; ?></div>
     <?php elseif ($error): ?>
-        <div class="alert alert-danger d-flex align-items-center" role="alert">
-            <i class="fa-solid fa-triangle-exclamation me-2"></i>
-            <div><?php echo $error; ?></div>
-        </div>
+        <div class="alert alert-danger py-2" style="border-radius: 14px; border: none;"><?php echo $error; ?></div>
     <?php endif; ?>
 
-    <form method="POST" enctype="multipart/form-data" class="row g-3">
-        <div class="col-md-6">
-            <label class="form-label fw-bold">Product Name <span class="text-danger">*</span></label>
-            <input type="text" name="name" class="form-control" placeholder="e.g. Handmade Ceramic Coffee Mug" required>
-        </div>
-        
-        <div class="col-md-6">
-            <label class="form-label fw-bold">Category <span class="text-danger">*</span></label>
-            <select name="category_id" class="form-select" required>
-                <option value="">Select Category</option>
-                <?php
-                $catStmt = $pdo->query("SELECT id, name FROM categories ORDER BY name");
-                while ($cat = $catStmt->fetch()):
-                ?>
-                    <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['name']); ?></option>
-                <?php endwhile; ?>
-            </select>
-        </div>
-
-        <div class="col-12">
-            <label class="form-label fw-bold">Description</label>
-            <textarea name="description" class="form-control" rows="4" placeholder="Detail the craftsmanship, size, material, customization options..."></textarea>
-        </div>
-
-        <div class="col-md-4">
-            <label class="form-label fw-bold">Base Price ($) <span class="text-danger">*</span></label>
-            <input type="number" step="0.01" name="base_price" class="form-control" placeholder="19.99" required>
-        </div>
-
-        <div class="col-md-4">
-            <label class="form-label fw-bold">Stock Quantity</label>
-            <input type="number" name="stock_quantity" class="form-control" placeholder="10" value="0">
-        </div>
-
-        <div class="col-md-4 d-flex align-items-center mt-4 pt-2">
-            <div class="form-check me-4">
-                <input class="form-check-input" type="checkbox" name="is_featured" id="featured">
-                <label class="form-check-label fw-semibold" for="featured">Featured Product</label>
+    <div class="glass-card">
+        <form method="POST" enctype="multipart/form-data" class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label fw-semibold small">Product Name <span style="color: var(--primary);">*</span></label>
+                <input type="text" name="name" class="form-control" placeholder="e.g. Handmade Ceramic Coffee Mug" required>
             </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="is_new" id="new" checked>
-                <label class="form-check-label fw-semibold" for="new">New Arrival</label>
+            <div class="col-md-6">
+                <label class="form-label fw-semibold small">Category <span style="color: var(--primary);">*</span></label>
+                <select name="category_id" class="form-select" required>
+                    <option value="">Select Category</option>
+                    <?php
+                    $catStmt = $pdo->query("SELECT id, name FROM categories ORDER BY name");
+                    while ($cat = $catStmt->fetch()):
+                    ?>
+                        <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['name']); ?></option>
+                    <?php endwhile; ?>
+                </select>
             </div>
-        </div>
-
-        <div class="col-md-6">
-            <label class="form-label fw-bold">Upload Product Image</label>
-            <input type="file" name="image" class="form-control" accept="image/*">
-            <div class="form-text">Supports PNG, JPG, JPEG. Will be saved to local assets.</div>
-        </div>
-
-        <div class="col-md-6">
-            <label class="form-label fw-bold">Or Image URL</label>
-            <input type="url" name="image_url" class="form-control" placeholder="https://images.unsplash.com/...">
-            <div class="form-text">Used if no file is uploaded.</div>
-        </div>
-
-        <div class="col-12 d-flex justify-content-end gap-2 mt-4">
-            <button type="reset" class="btn btn-premium-outline">Reset Form</button>
-            <button type="submit" class="btn btn-premium"><i class="fa-solid fa-save me-2"></i>Create Product</button>
-        </div>
-    </form>
+            <div class="col-12">
+                <label class="form-label fw-semibold small">Description</label>
+                <textarea name="description" class="form-control" rows="4" placeholder="Detail the craftsmanship, size, material, customization options..."></textarea>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Base Price (₹) <span style="color: var(--primary);">*</span></label>
+                <input type="number" step="0.01" name="base_price" class="form-control" placeholder="499" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Stock Quantity</label>
+                <input type="number" name="stock_quantity" class="form-control" placeholder="10" value="0">
+            </div>
+            <div class="col-md-4 d-flex align-items-end gap-3 pb-1">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="is_featured" id="featured" style="border-color: var(--primary);">
+                    <label class="form-check-label small fw-semibold" for="featured">Featured</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="is_new" id="new" checked style="border-color: var(--primary);">
+                    <label class="form-check-label small fw-semibold" for="new">New Arrival</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-semibold small">Upload Image</label>
+                <input type="file" name="image" class="form-control" accept="image/*">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-semibold small">Or Image URL</label>
+                <input type="url" name="image_url" class="form-control" placeholder="https://images.unsplash.com/...">
+            </div>
+            <div class="col-12 d-flex justify-content-end gap-2 mt-3">
+                <button type="reset" class="btn btn-premium-outline btn-sm">Reset</button>
+                <button type="submit" class="btn btn-premium btn-sm"><i class="fa-solid fa-save me-2"></i>Create Product</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <?php include 'includes/footer.php'; ?>
