@@ -227,8 +227,7 @@ async function sendChat() {
         const form = new FormData();
         form.append('message', msg);
         form.append('session_id', sessionId);
-        const base = window.location.pathname.includes('/admin/') ? '../ai/chatbot.php' : 'ai/chatbot.php';
-        const res = await fetch(base, { method: 'POST', body: form });
+        const res = await fetch(aiBaseUrl + '/chatbot.php', { method: 'POST', body: form });
         const data = await res.json();
         hideTyping();
         if (data.success) {
