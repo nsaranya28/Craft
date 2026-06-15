@@ -358,6 +358,7 @@ if (!isAdminLoggedIn()) {
 <body>
     <div class="deco-heart-1">♥</div>
     <div class="deco-heart-2">♡</div>
+    <?php include __DIR__ . '/../../ai/chatbot-widget.php'; ?>
     <header class="admin-navbar shadow-sm">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <a href="dashboard.php" class="logo">

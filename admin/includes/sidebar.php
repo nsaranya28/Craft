@@ -10,6 +10,7 @@ $navItems = [
     ['icon' => 'fa-solid fa-star',              'label' => 'Reviews',        'file' => 'manage_reviews.php',     'match' => ['manage_reviews.php']],
     ['icon' => 'fa-solid fa-envelope',          'label' => 'Messages',       'file' => 'manage_messages.php',    'match' => ['manage_messages.php']],
     ['icon' => 'fa-solid fa-chart-line',        'label' => 'Reports',        'file' => 'reports.php',            'match' => ['reports.php']],
+    ['icon' => 'fa-solid fa-robot',             'label' => 'AI Dashboard',   'file' => 'ai-dashboard.php',       'match' => ['ai-dashboard.php']],
     ['icon' => 'fa-solid fa-gear',              'label' => 'Settings',       'file' => 'settings.php',           'match' => ['settings.php']],
 ];
 ?>
