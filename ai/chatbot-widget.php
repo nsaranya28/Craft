@@ -4,6 +4,10 @@
  *   <?php include 'ai/chatbot-widget.php'; ?>
  */
 $session_id = session_id() ?: bin2hex(random_bytes(16));
+
+// Determine correct relative path to ai/ from the including page
+$scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+$aiBase = (strpos($scriptDir, '/admin') !== false) ? '../ai' : 'ai';
 ?>
 <!-- AI Chatbot Widget -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -172,6 +176,7 @@ $session_id = session_id() ?: bin2hex(random_bytes(16));
 
 <script>
 let sessionId = '<?php echo $session_id; ?>';
+let aiBaseUrl = '<?php echo $aiBase; ?>';
 let isChatLoading = false;
 
 function toggleChatbot() {
@@ -222,7 +227,8 @@ async function sendChat() {
         const form = new FormData();
         form.append('message', msg);
         form.append('session_id', sessionId);
-        const res = await fetch('ai/chatbot.php', { method: 'POST', body: form });
+        const base = window.location.pathname.includes('/admin/') ? '../ai/chatbot.php' : 'ai/chatbot.php';
+        const res = await fetch(base, { method: 'POST', body: form });
         const data = await res.json();
         hideTyping();
         if (data.success) {
