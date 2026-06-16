@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['payment_method'] = $order['payment_method'];
             $_SESSION['upi_id']       = $order['upi_id'] ?? '';
 
-            header("Location: ../checkout.php?success=1");
+            header("Location: ../user/rate-order.php?order_id=" . $orderId);
             exit;
         } catch (\PDOException $e) {
             if ($pdo->inTransaction()) $pdo->rollBack();
