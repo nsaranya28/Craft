@@ -274,6 +274,133 @@ try {
             </a>
         </div>
     </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- AI Smart Assistant Section                                        -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h4 class="fw-bold mb-0" style="font-family: 'Playfair Display', serif;">♡ AI Smart Assistant ♡</h4>
+            <div class="d-flex gap-2">
+                <a href="../ai-assistant.php" class="btn btn-premium-outline btn-sm"><i class="fa-solid fa-wand-magic-sparkles me-1"></i>Open Full AI Panel</a>
+                <a href="ai-dashboard.php" class="btn btn-premium-outline btn-sm"><i class="fa-solid fa-chart-simple me-1"></i>AI Analytics</a>
+            </div>
+        </div>
+
+        <!-- AI Quick Actions -->
+        <div class="row g-3 mb-3">
+            <div class="col-md-2 col-4">
+                <a href="../ai-assistant.php#panel-generator" class="text-decoration-none">
+                    <div class="glass-card text-center py-3">
+                        <div class="stat-icon-wrapper mx-auto mb-1" style="background: linear-gradient(135deg, var(--pink-100), var(--pink-200)); color: var(--primary); width: 38px; height: 38px; font-size: 1rem;">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <h6 class="fw-semibold mb-0" style="font-size:0.7rem;">Gift Gen</h6>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-2 col-4">
+                <a href="../ai-assistant.php#panel-greetings" class="text-decoration-none">
+                    <div class="glass-card text-center py-3">
+                        <div class="stat-icon-wrapper mx-auto mb-1" style="background: linear-gradient(135deg, #e8e0ff, #d4c8ff); color: #6c4dff; width: 38px; height: 38px; font-size: 1rem;">
+                            <i class="fa-solid fa-message"></i>
+                        </div>
+                        <h6 class="fw-semibold mb-0" style="font-size:0.7rem;">Greetings</h6>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-2 col-4">
+                <a href="../ai-assistant.php#panel-image" class="text-decoration-none">
+                    <div class="glass-card text-center py-3">
+                        <div class="stat-icon-wrapper mx-auto mb-1" style="background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #15803d; width: 38px; height: 38px; font-size: 1rem;">
+                            <i class="fa-solid fa-image"></i>
+                        </div>
+                        <h6 class="fw-semibold mb-0" style="font-size:0.7rem;">Image AI</h6>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-2 col-4">
+                <a href="../ai-assistant.php#panel-search" class="text-decoration-none">
+                    <div class="glass-card text-center py-3">
+                        <div class="stat-icon-wrapper mx-auto mb-1" style="background: linear-gradient(135deg, #fef3c7, #fde68a); color: #b45309; width: 38px; height: 38px; font-size: 1rem;">
+                            <i class="fa-solid fa-search"></i>
+                        </div>
+                        <h6 class="fw-semibold mb-0" style="font-size:0.7rem;">Smart Search</h6>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-2 col-4">
+                <a href="../ai-assistant.php#panel-trending" class="text-decoration-none">
+                    <div class="glass-card text-center py-3">
+                        <div class="stat-icon-wrapper mx-auto mb-1" style="background: linear-gradient(135deg, #fee2e2, #fecaca); color: #b91c1c; width: 38px; height: 38px; font-size: 1rem;">
+                            <i class="fa-solid fa-fire"></i>
+                        </div>
+                        <h6 class="fw-semibold mb-0" style="font-size:0.7rem;">Trending</h6>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-2 col-4">
+                <a href="../ai-assistant.php#panel-chat" class="text-decoration-none">
+                    <div class="glass-card text-center py-3">
+                        <div class="stat-icon-wrapper mx-auto mb-1" style="background: linear-gradient(135deg, #e8e0ff, #d4c8ff); color: #6c4dff; width: 38px; height: 38px; font-size: 1rem;">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <h6 class="fw-semibold mb-0" style="font-size:0.7rem;">AI Chat</h6>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- AI Stats + Mini Chat -->
+        <div class="row g-3">
+            <div class="col-lg-7">
+                <div class="glass-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h5 class="fw-bold mb-0" style="font-family: 'Playfair Display', serif;">♥ Trending Gifts ♥</h5>
+                    </div>
+                    <div class="row g-2" id="dashboardTrending">
+                        <?php
+                        $dashTrending = $pdo->query("SELECT p.*, c.name as category_name, COALESCE(SUM(oi.quantity),0) as total_sold FROM products p LEFT JOIN order_items oi ON p.id = oi.product_id LEFT JOIN categories c ON p.category_id = c.id GROUP BY p.id ORDER BY total_sold DESC, p.is_featured DESC LIMIT 4")->fetchAll();
+                        if (empty($dashTrending)): ?>
+                            <div class="col-12 text-center py-3" style="color: var(--text-light);">
+                                <i class="fa-solid fa-fire fa-2x mb-2" style="color: var(--pink-200);"></i>
+                                <p class="small mb-0">No sales data yet</p>
+                            </div>
+                        <?php else: ?>
+                            <?php foreach ($dashTrending as $dt): ?>
+                                <div class="col-md-3 col-6">
+                                    <div style="background: rgba(255,255,255,0.5); border-radius: 12px; padding: 0.6rem; border: 1px solid var(--glass-border); height: 100%;">
+                                        <div style="width:100%; height:80px; border-radius: 8px; overflow: hidden; background: var(--pink-50); margin-bottom: 0.4rem;">
+                                            <img src="<?php echo htmlspecialchars(dashImg($dt['image'] ?: '')); ?>" alt="" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--pink-200);font-size:1.5rem;\'><i class=\'fa-solid fa-gift\'></i></div>'">
+                                        </div>
+                                        <h6 style="font-size:0.75rem; font-weight:600; margin-bottom:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><?php echo htmlspecialchars($dt['name']); ?></h6>
+                                        <div style="color: var(--primary); font-weight:700; font-size:0.8rem;">₹<?php echo number_format($dt['base_price'], 2); ?></div>
+                                        <span class="badge" style="background: var(--pink-50); color: var(--primary); font-size:0.6rem;"><i class="fa-solid fa-fire me-1"></i><?php echo $dt['total_sold']; ?> sold</span>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="glass-card" style="height: 100%; display: flex; flex-direction: column;">
+                    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                        <h5 class="fw-bold mb-0" style="font-family: 'Playfair Display', serif;">♥ Quick AI Chat ♥</h5>
+                    </div>
+                    <div style="flex-grow:1; overflow-y:auto; padding:0.3rem 0; display:flex; flex-direction:column; gap:0.4rem; max-height:180px;" id="dashChatMessages">
+                        <div style="max-width:90%; padding:0.5rem 0.8rem; border-radius: 12px; background:#FFF3F5; color:#442E3C; font-size:0.78rem; align-self:flex-start; border-bottom-left-radius:4px;">
+                            Hi! Ask me about gifts or orders! 💕
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:0.4rem; padding-top:0.5rem; border-top:1px solid var(--glass-border); margin-top:auto;">
+                        <input type="text" id="dashChatInput" class="form-control form-control-sm" placeholder="Ask AI..." style="border-radius: 10px; font-size:0.78rem;">
+                        <button class="btn btn-premium btn-sm" id="dashChatSend" style="padding:0.3rem 0.7rem; font-size:0.75rem;"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
@@ -287,4 +414,60 @@ try {
     }
 </style>
 
-<?php include 'includes/footer.php'; ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatInput = document.getElementById('dashChatInput');
+    const chatSend = document.getElementById('dashChatSend');
+    const chatMsg = document.getElementById('dashChatMessages');
+    let isLoading = false;
+
+    function addMsg(text, isUser) {
+        const div = document.createElement('div');
+        div.style.cssText = 'max-width:90%;padding:0.5rem 0.8rem;border-radius:12px;font-size:0.78rem;' +
+            (isUser
+                ? 'background:linear-gradient(135deg,#E25F84,#F2A1B7);color:white;align-self:flex-end;border-bottom-right-radius:4px;'
+                : 'background:#FFF3F5;color:#442E3C;align-self:flex-start;border-bottom-left-radius:4px;');
+        div.textContent = text;
+        chatMsg.appendChild(div);
+        chatMsg.scrollTop = chatMsg.scrollHeight;
+    }
+
+    async function sendDashChat() {
+        if (isLoading) return;
+        const msg = chatInput.value.trim();
+        if (!msg) return;
+        addMsg(msg, true);
+        chatInput.value = '';
+        isLoading = true;
+        chatSend.disabled = true;
+        addMsg('Thinking...', false);
+        try {
+            const form = new FormData();
+            form.append('message', msg);
+            form.append('session_id', '<?php echo session_id(); ?>');
+            const res = await fetch('../ai/chatbot.php', { method: 'POST', body: form });
+            const data = await res.json();
+            chatMsg.removeChild(chatMsg.lastChild);
+            if (data.success) addMsg(data.reply.replace(/<[^>]*>/g, ''), false);
+        } catch(e) {
+            chatMsg.removeChild(chatMsg.lastChild);
+            addMsg('Oops! Connection error.', false);
+        }
+        isLoading = false;
+        chatSend.disabled = false;
+    }
+
+    chatSend.addEventListener('click', sendDashChat);
+    chatInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') sendDashChat();
+    });
+});
+</script>
+
+<?php
+function dashImg($path) {
+    if (!$path) return '../assets/img/products/default.jpg';
+    if (preg_match('/^https?:\/\//i', $path)) return $path;
+    return '../' . $path;
+}
+include 'includes/footer.php'; ?>
