@@ -55,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $order = $_SESSION['otp_pending_order'];
 
         try {
+            $pdo->beginTransaction();
             $stmt = $pdo->prepare(
                 "INSERT INTO orders (user_id, total_amount, status, payment_status, shipping_address)
                  VALUES (?, ?, 'ordered', 'paid', ?)"
@@ -62,11 +63,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$order['user_id'], $order['total'], $order['shipping_address']]);
             $orderId = $pdo->lastInsertId();
 
+            // Save order items from cart
+            if (!empty($_SESSION['cart'])) {
+                $itemStmt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)");
+                foreach ($_SESSION['cart'] as $cartItem) {
+                    $pid = $cartItem['product_id'];
+                    $qty = $cartItem['quantity'] ?? 1;
+                    $priceStmt = $pdo->prepare("SELECT base_price FROM products WHERE id = ?");
+                    $priceStmt->execute([$pid]);
+                    $price = $priceStmt->fetchColumn() ?: 0;
+                    $itemStmt->execute([$orderId, $pid, $qty, $price]);
+                }
+            }
+
             // Save UPI ID if payment is GPay or PhonePe
             if (!empty($order['upi_id'])) {
+                @$pdo->exec("CREATE TABLE IF NOT EXISTS order_meta (order_id INT, meta_key VARCHAR(64), meta_value TEXT, INDEX idx_order (order_id))");
                 $stmt = $pdo->prepare("INSERT INTO order_meta (order_id, meta_key, meta_value) VALUES (?, 'upi_id', ?)");
                 $stmt->execute([$orderId, $order['upi_id']]);
             }
+
+            $pdo->commit();
+
+            // Store last order ID for feedback after redirect
+            $_SESSION['last_order_id'] = $orderId;
 
             // Clear OTP & pending order data
             unset(
@@ -83,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: ../checkout.php?success=1");
             exit;
         } catch (\PDOException $e) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
             $error = 'Failed to place order. Please try again.';
         }
     }

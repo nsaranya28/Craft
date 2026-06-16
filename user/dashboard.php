@@ -20,6 +20,27 @@ $stmt = $pdo->prepare("SELECT * FROM orders WHERE user_id = ? ORDER BY order_dat
 $stmt->execute([$user_id]);
 $orders = $stmt->fetchAll();
 
+// Get order items for all user orders
+$orderItems = [];
+$reviewedItems = []; // track (order_id, product_id) already reviewed
+if (!empty($orders)) {
+    $orderIds = array_column($orders, 'id');
+    $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
+    $stmt = $pdo->prepare("SELECT oi.*, p.name, p.image FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id IN ($placeholders)");
+    $stmt->execute($orderIds);
+    $items = $stmt->fetchAll();
+    foreach ($items as $item) {
+        $orderItems[$item['order_id']][] = $item;
+    }
+
+    // Get existing reviews to know what's already reviewed
+    $stmt = $pdo->prepare("SELECT product_id, order_id FROM reviews WHERE user_id = ?");
+    $stmt->execute([$user_id]);
+    foreach ($stmt->fetchAll() as $rv) {
+        $reviewedItems[$rv['order_id'] . '_' . $rv['product_id']] = true;
+    }
+}
+
 // Get Custom Requests
 $stmt = $pdo->prepare("SELECT * FROM custom_orders WHERE user_id = ? ORDER BY created_at DESC");
 $stmt->execute([$user_id]);
@@ -252,19 +273,25 @@ unset($_SESSION['settings_success'], $_SESSION['settings_error']);
                     </div>
                 <?php else: ?>
                     <div style="overflow-x:auto;">
-                        <table class="dash-table">
+                        <table class="dash-table" id="ordersTable">
                             <thead>
                                 <tr>
+                                    <th style="width:30px;"></th>
                                     <th>Order ID</th>
                                     <th>Date</th>
                                     <th>Amount</th>
                                     <th>Status</th>
-                                    <th>Shipping</th>
+                                    <th>Items</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach($orders as $order): ?>
-                                <tr>
+                                <?php foreach($orders as $order):
+                                    $items = $orderItems[$order['id']] ?? [];
+                                ?>
+                                <tr class="order-row" data-order="<?= $order['id'] ?>">
+                                    <td style="text-align:center;">
+                                        <i class="fas fa-chevron-down expand-icon" style="cursor:pointer;color:var(--text-light);transition:transform 0.2s;" onclick="toggleOrderItems(<?= $order['id'] ?>)"></i>
+                                    </td>
                                     <td><strong>#ORD-<?= $order['id'] ?></strong></td>
                                     <td><?= date('M d, Y', strtotime($order['order_date'])) ?></td>
                                     <td><strong>₹<?= number_format($order['total_amount'], 2) ?></strong></td>
@@ -273,8 +300,44 @@ unset($_SESSION['settings_success'], $_SESSION['settings_error']);
                                             <?= ucfirst($order['status']) ?>
                                         </span>
                                     </td>
-                                    <td style="font-size:0.82rem; color:var(--text-light); max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                                        <?= htmlspecialchars($order['shipping_address']) ?>
+                                    <td><span class="badge" style="background:var(--pink-50);color:var(--primary);font-size:0.75rem;"><?= count($items) ?> item(s)</span></td>
+                                </tr>
+                                <tr class="order-items-row" id="items-<?= $order['id'] ?>" style="display:none;">
+                                    <td colspan="6" style="padding:0;">
+                                        <div style="padding:0.75rem 1.5rem; background:var(--cream); border-bottom:2px solid var(--pink-100);">
+                                            <div class="row g-2">
+                                                <?php if (empty($items)): ?>
+                                                    <div class="col-12 text-center py-2" style="color:var(--text-light);font-size:0.85rem;">No items recorded for this order.</div>
+                                                <?php else: ?>
+                                                    <?php foreach ($items as $item):
+                                                        $isReviewed = isset($reviewedItems[$order['id'] . '_' . $item['product_id']]);
+                                                        $imgSrc = $item['image'];
+                                                        if ($imgSrc && !preg_match('/^https?:\/\//i', $imgSrc)) $imgSrc = '../' . $imgSrc;
+                                                    ?>
+                                                    <div class="col-md-6">
+                                                        <div style="display:flex;gap:0.75rem;align-items:center;background:white;border-radius:10px;padding:0.6rem 0.8rem;border:1px solid var(--pink-50);">
+                                                            <div style="width:50px;height:50px;border-radius:8px;overflow:hidden;background:var(--pink-50);flex-shrink:0;">
+                                                                <img src="<?= htmlspecialchars($imgSrc ?: '../assets/img/products/default.jpg') ?>" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--pink-200);font-size:1.2rem;\'><i class=\'fa-solid fa-gift\'></i></div>'">
+                                                            </div>
+                                                            <div style="flex-grow:1;min-width:0;">
+                                                                <div style="font-weight:600;font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?= htmlspecialchars($item['name']) ?></div>
+                                                                <div style="font-size:0.72rem;color:var(--text-light);">Qty: <?= $item['quantity'] ?> × ₹<?= number_format($item['price'], 2) ?></div>
+                                                            </div>
+                                                            <div style="flex-shrink:0;">
+                                                                <?php if ($isReviewed): ?>
+                                                                    <span style="font-size:0.7rem;color:#15803d;"><i class="fa-solid fa-check-circle me-1"></i>Reviewed</span>
+                                                                <?php else: ?>
+                                                                    <button class="btn btn-sm" style="background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;border:none;border-radius:8px;font-size:0.7rem;padding:0.3rem 0.6rem;white-space:nowrap;" onclick="openReview(<?= $item['product_id'] ?>, <?= $order['id'] ?>, '<?= htmlspecialchars(addslashes($item['name'])) ?>')">
+                                                                        <i class="fa-solid fa-star me-1"></i>Review
+                                                                    </button>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -461,8 +524,152 @@ unset($_SESSION['settings_success'], $_SESSION['settings_error']);
         </div>
     </footer>
 
+    <!-- Review Modal -->
+    <div class="modal fade" id="reviewModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius:20px;border:none;">
+                <div class="modal-header" style="border-bottom:2px dashed var(--pink-100);">
+                    <h5 class="modal-title fw-bold" style="font-family:var(--font-serif);">♥ Write a Review ♥</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p style="color:var(--text-light);font-size:0.9rem;" id="reviewProductName">Rate your purchase</p>
+
+                    <!-- Star Rating -->
+                    <div style="text-align:center;margin-bottom:1.5rem;">
+                        <div class="star-rating" style="display:flex;gap:6px;justify-content:center;font-size:2.2rem;">
+                            <i class="fa-regular fa-star" data-star="1" style="cursor:pointer;color:var(--pink-200);transition:all 0.2s;"></i>
+                            <i class="fa-regular fa-star" data-star="2" style="cursor:pointer;color:var(--pink-200);transition:all 0.2s;"></i>
+                            <i class="fa-regular fa-star" data-star="3" style="cursor:pointer;color:var(--pink-200);transition:all 0.2s;"></i>
+                            <i class="fa-regular fa-star" data-star="4" style="cursor:pointer;color:var(--pink-200);transition:all 0.2s;"></i>
+                            <i class="fa-regular fa-star" data-star="5" style="cursor:pointer;color:var(--pink-200);transition:all 0.2s;"></i>
+                        </div>
+                        <div style="font-size:0.8rem;color:var(--text-light);margin-top:0.3rem;" id="ratingLabel">Click a star to rate</div>
+                    </div>
+
+                    <input type="hidden" id="reviewProductId" value="">
+                    <input type="hidden" id="reviewOrderId" value="">
+                    <input type="hidden" id="reviewRating" value="0">
+
+                    <div class="mb-3">
+                        <label class="form-label">Your Review</label>
+                        <textarea id="reviewComment" class="form-control" rows="4" placeholder="Tell us what you think about this product..." style="border-radius:12px;border-color:var(--pink-200);resize:none;"></textarea>
+                    </div>
+
+                    <button class="btn w-100 py-2" id="submitReviewBtn" style="background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;border:none;border-radius:12px;font-weight:600;" onclick="submitReview()">
+                        <i class="fa-solid fa-paper-plane me-2"></i>Submit Review
+                    </button>
+                    <div id="reviewFeedback" style="margin-top:0.5rem;font-size:0.85rem;text-align:center;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // ── Toggle order items ──────────────────────────────────────────────
+        function toggleOrderItems(id) {
+            const row = document.getElementById('items-' + id);
+            const icon = document.querySelector(`.order-row[data-order="${id}"] .expand-icon`);
+            if (row.style.display === 'none') {
+                row.style.display = 'table-row';
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                row.style.display = 'none';
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // ── Star rating ─────────────────────────────────────────────────────
+        let selectedRating = 0;
+        document.querySelectorAll('.star-rating i').forEach(star => {
+            star.addEventListener('mouseenter', function() {
+                const val = parseInt(this.dataset.star);
+                highlightStars(val);
+            });
+            star.addEventListener('mouseleave', function() {
+                highlightStars(selectedRating);
+            });
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.dataset.star);
+                document.getElementById('reviewRating').value = selectedRating;
+                highlightStars(selectedRating);
+                const labels = ['', 'Terrible 😢', 'Bad 🙁', 'Okay 😐', 'Good 😊', 'Amazing 🥰'];
+                document.getElementById('ratingLabel').textContent = labels[selectedRating];
+            });
+        });
+
+        function highlightStars(count) {
+            document.querySelectorAll('.star-rating i').forEach(s => {
+                const val = parseInt(s.dataset.star);
+                if (val <= count) {
+                    s.className = 'fa-solid fa-star';
+                    s.style.color = '#f59e0b';
+                } else {
+                    s.className = 'fa-regular fa-star';
+                    s.style.color = 'var(--pink-200)';
+                }
+            });
+        }
+
+        // ── Open review modal ───────────────────────────────────────────────
+        function openReview(productId, orderId, productName) {
+            document.getElementById('reviewProductId').value = productId;
+            document.getElementById('reviewOrderId').value = orderId;
+            document.getElementById('reviewProductName').textContent = '♡ ' + productName;
+            document.getElementById('reviewRating').value = 0;
+            document.getElementById('reviewComment').value = '';
+            document.getElementById('reviewFeedback').innerHTML = '';
+            selectedRating = 0;
+            highlightStars(0);
+            document.getElementById('ratingLabel').textContent = 'Click a star to rate';
+            const modal = new bootstrap.Modal(document.getElementById('reviewModal'));
+            modal.show();
+        }
+
+        // ── Submit review ───────────────────────────────────────────────────
+        async function submitReview() {
+            const btn = document.getElementById('submitReviewBtn');
+            const feedback = document.getElementById('reviewFeedback');
+            const productId = document.getElementById('reviewProductId').value;
+            const orderId = document.getElementById('reviewOrderId').value;
+            const rating = document.getElementById('reviewRating').value;
+            const comment = document.getElementById('reviewComment').value.trim();
+
+            if (!rating || rating < 1) {
+                feedback.innerHTML = '<span style="color:#b91c1c;">Please select a star rating.</span>';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
+
+            try {
+                const form = new FormData();
+                form.append('product_id', productId);
+                form.append('order_id', orderId);
+                form.append('rating', rating);
+                form.append('comment', comment);
+
+                const res = await fetch('submit-review.php', { method: 'POST', body: form });
+                const data = await res.json();
+
+                if (data.success) {
+                    feedback.innerHTML = '<span style="color:#15803d;"><i class="fa-solid fa-check-circle me-1"></i>' + data.message + '</span>';
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    feedback.innerHTML = '<span style="color:#b91c1c;">' + data.message + '</span>';
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-paper-plane me-2"></i>Submit Review';
+                }
+            } catch(e) {
+                feedback.innerHTML = '<span style="color:#b91c1c;">Connection error. Try again.</span>';
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane me-2"></i>Submit Review';
+            }
+        }
+
+        // ── Toggle password visibility ──────────────────────────────────────
         function togglePwd(inputId, btn) {
             const input = document.getElementById(inputId);
             const icon  = btn.querySelector('i');
