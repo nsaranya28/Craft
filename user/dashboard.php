@@ -15,6 +15,14 @@ $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch();
 
+// Ensure reviews table has required columns
+foreach ([
+    "ALTER TABLE reviews ADD COLUMN is_approved TINYINT(1) DEFAULT 0 AFTER comment",
+    "ALTER TABLE reviews ADD COLUMN order_id INT DEFAULT NULL AFTER product_id"
+] as $sql) {
+    try { $pdo->exec($sql); } catch (PDOException $e) {}
+}
+
 // Get Orders
 $stmt = $pdo->prepare("SELECT * FROM orders WHERE user_id = ? ORDER BY order_date DESC");
 $stmt->execute([$user_id]);
@@ -22,7 +30,7 @@ $orders = $stmt->fetchAll();
 
 // Get order items for all user orders
 $orderItems = [];
-$reviewedItems = []; // track (order_id, product_id) already reviewed
+$reviewedItems = [];
 if (!empty($orders)) {
     $orderIds = array_column($orders, 'id');
     $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
