@@ -36,11 +36,12 @@ if ($stmt->fetch()) {
     exit;
 }
 
-// Ensure is_approved column exists
-try {
-    $pdo->exec("ALTER TABLE reviews ADD COLUMN is_approved TINYINT(1) DEFAULT 0 AFTER comment, ADD COLUMN order_id INT DEFAULT NULL AFTER product_id");
-} catch (PDOException $e) {
-    // Column may already exist
+// Ensure is_approved and order_id columns exist
+foreach ([
+    "ALTER TABLE reviews ADD COLUMN is_approved TINYINT(1) DEFAULT 0 AFTER comment",
+    "ALTER TABLE reviews ADD COLUMN order_id INT DEFAULT NULL AFTER product_id"
+] as $sql) {
+    try { $pdo->exec($sql); } catch (PDOException $e) {}
 }
 
 try {
