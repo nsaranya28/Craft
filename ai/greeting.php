@@ -12,6 +12,31 @@ $tone     = $_POST['tone'] ?? '';
 $name     = trim($_POST['name'] ?? '');
 $custom   = trim($_POST['custom'] ?? '');
 
+function getGreetingImages($pdo, $cat) {
+    $map = [
+        'Birthday'    => [1, 2, 4, 5, 8],
+        'Anniversary' => [2, 5, 9],
+        'Wedding'     => [2, 5, 9],
+        'Friendship'  => [4, 7],
+        'Thank You'   => [5, 7],
+        'Love'        => [2, 9],
+    ];
+    $ids = $map[$cat] ?? [5];
+    $ph  = implode(',', array_fill(0, count($ids), '?'));
+    $stmt = $pdo->prepare("SELECT image FROM products WHERE category_id IN ($ph) AND image != '' AND image IS NOT NULL ORDER BY RAND() LIMIT 6");
+    $stmt->execute($ids);
+    $images = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    if (empty($images)) {
+        // Static fallback images
+        $images = [
+            'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&q=80&w=400',
+            'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80&w=400',
+            'https://images.unsplash.com/photo-1513207565459-d7f36bfa1222?auto=format&fit=crop&q=80&w=400',
+        ];
+    }
+    return $images;
+}
+
 try {
     // Try real AI first
     $aiMsg = '';
@@ -32,10 +57,11 @@ try {
     if ($row) {
         $msg = $row['message'];
         if ($name) {
-            // Insert name into greeting
             $msg = preg_replace('/(Happy|Wishing|Congratulations|Thank|Love|Dear)/', '$1 ' . htmlspecialchars($name) . ',', $msg, 1);
         }
-        echo json_encode(['success' => true, 'message' => $msg]);
+        $images = getGreetingImages($pdo, $category);
+        echo json_encode(['success' => true, 'message' => $msg, 'images' => $images]);
+        exit;
     } else {
         // Generate dynamically if no template
         $msgs = [
@@ -84,7 +110,8 @@ try {
         ];
 
         $msg = $msgs[$category][$tone] ?? "Wishing you joy and happiness" . ($name ? " $name" : "") . "! ♡";
-        echo json_encode(['success' => true, 'message' => $msg]);
+        $images = getGreetingImages($pdo, $category);
+        echo json_encode(['success' => true, 'message' => $msg, 'images' => $images]);
     }
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => 'Could not generate greeting.']);

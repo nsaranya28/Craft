@@ -35,7 +35,9 @@ $trending = $pdo->query("SELECT p.*, c.name as category_name, COALESCE(SUM(oi.qu
 
 .placeholder-state { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; color: var(--text-light); text-align: center; padding: 2rem; }
 
-.greeting-box { background: linear-gradient(135deg, var(--pink-50), #FFF5F7); border-radius: 16px; padding: 1.5rem; min-height: 200px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 1.05rem; line-height: 1.7; color: var(--text); }
+.greeting-box { background: linear-gradient(135deg, var(--pink-50), #FFF5F7); border-radius: 16px; padding: 1.5rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-size: 1.05rem; line-height: 1.7; color: var(--text); }
+
+.greeting-box > div { width: 100%; }
 
 .form-select-sm, .form-control-sm { border-radius: 12px !important; border-color: var(--pink-200) !important; }
 
@@ -458,7 +460,16 @@ async function generateGreeting(form) {
         const copyBtn = document.getElementById('greetingCopyBtn');
 
         if (data.success) {
-            out.innerHTML = data.message.replace(/\n/g, '<br>');
+            let html = '<div style="margin-bottom:1rem;">' + data.message.replace(/\n/g, '<br>') + '</div>';
+            if (data.images && data.images.length) {
+                html += '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:0.8rem;border-top:1px dashed var(--pink-100);padding-top:1rem;">';
+                data.images.forEach(function(src) {
+                    const imgSrc = src && !src.match(/^https?:\/\//i) ? '../' + src : src;
+                    html += '<div style="width:70px;height:70px;border-radius:12px;overflow:hidden;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.06);flex-shrink:0;"><img src="' + imgSrc + '" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML=\'<div style=\\\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--pink-200);font-size:1.2rem;background:var(--pink-50);\\\'><i class=\\\'fa-solid fa-gift\\\'></i></div>\'"></div>';
+                });
+                html += '</div>';
+            }
+            out.innerHTML = html;
             out.dataset.greeting = data.message;
             refreshBtn.style.display = '';
             copyBtn.style.display = '';
