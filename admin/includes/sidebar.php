@@ -1,17 +1,18 @@
 <?php
 $currentFile = basename($_SERVER['PHP_SELF']);
+$adminPrefix = (strpos($_SERVER['SCRIPT_NAME'], '/admin/') !== false) ? '' : 'admin/';
 $navItems = [
-    ['icon' => 'fa-solid fa-chart-pie',        'label' => 'Dashboard',      'file' => 'dashboard.php',          'match' => ['dashboard.php']],
-    ['icon' => 'fa-solid fa-truck',             'label' => 'Orders',         'file' => 'manage_orders.php',      'match' => ['manage_orders.php', 'create_order.php']],
-    ['icon' => 'fa-solid fa-gift',              'label' => 'Products',       'file' => 'manage_products.php',    'match' => ['manage_products.php', 'create_product.php', 'edit_product.php']],
-    ['icon' => 'fa-solid fa-tags',              'label' => 'Categories',     'file' => 'manage_categories.php',  'match' => ['manage_categories.php']],
-    ['icon' => 'fa-solid fa-wand-magic-sparkles', 'label' => 'Custom Orders','file' => 'manage_custom_orders.php','match' => ['manage_custom_orders.php']],
-    ['icon' => 'fa-solid fa-users',             'label' => 'Customers',      'file' => 'manage_customers.php',   'match' => ['manage_customers.php']],
-    ['icon' => 'fa-solid fa-star',              'label' => 'Reviews',        'file' => 'manage_reviews.php',     'match' => ['manage_reviews.php']],
-    ['icon' => 'fa-solid fa-envelope',          'label' => 'Messages',       'file' => 'manage_messages.php',    'match' => ['manage_messages.php']],
-    ['icon' => 'fa-solid fa-chart-line',        'label' => 'Reports',        'file' => 'reports.php',            'match' => ['reports.php']],
-    ['icon' => 'fa-solid fa-robot',             'label' => 'AI Dashboard',   'file' => 'ai-dashboard.php',       'match' => ['ai-dashboard.php']],
-    ['icon' => 'fa-solid fa-gear',              'label' => 'Settings',       'file' => 'settings.php',           'match' => ['settings.php']],
+    ['icon' => 'fa-solid fa-chart-pie',        'label' => 'Dashboard',      'file' => $adminPrefix . 'dashboard.php',          'match' => ['dashboard.php']],
+    ['icon' => 'fa-solid fa-truck',             'label' => 'Orders',         'file' => $adminPrefix . 'manage_orders.php',      'match' => ['manage_orders.php', 'create_order.php']],
+    ['icon' => 'fa-solid fa-gift',              'label' => 'Products',       'file' => $adminPrefix . 'manage_products.php',    'match' => ['manage_products.php', 'create_product.php', 'edit_product.php']],
+    ['icon' => 'fa-solid fa-tags',              'label' => 'Categories',     'file' => $adminPrefix . 'manage_categories.php',  'match' => ['manage_categories.php']],
+    ['icon' => 'fa-solid fa-wand-magic-sparkles', 'label' => 'Custom Orders','file' => $adminPrefix . 'manage_custom_orders.php','match' => ['manage_custom_orders.php']],
+    ['icon' => 'fa-solid fa-users',             'label' => 'Customers',      'file' => $adminPrefix . 'manage_customers.php',   'match' => ['manage_customers.php']],
+    ['icon' => 'fa-solid fa-star',              'label' => 'Reviews',        'file' => $adminPrefix . 'manage_reviews.php',     'match' => ['manage_reviews.php']],
+    ['icon' => 'fa-solid fa-envelope',          'label' => 'Messages',       'file' => $adminPrefix . 'manage_messages.php',    'match' => ['manage_messages.php']],
+    ['icon' => 'fa-solid fa-chart-line',        'label' => 'Reports',        'file' => $adminPrefix . 'reports.php',            'match' => ['reports.php']],
+    ['icon' => 'fa-solid fa-robot',             'label' => 'AI Dashboard',   'file' => $adminPrefix . 'ai-dashboard.php',       'match' => ['ai-dashboard.php']],
+    ['icon' => 'fa-solid fa-gear',              'label' => 'Settings',       'file' => $adminPrefix . 'settings.php',           'match' => ['settings.php']],
 ];
 ?>
                         <li class="sidebar-label">♡ Main ♡</li>
