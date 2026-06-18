@@ -37,8 +37,11 @@ include 'includes/db.php';
                     <li class="nav-item"><a class="nav-link fw-medium" href="#categories">Categories</a></li>
                     <li class="nav-item"><a class="nav-link fw-medium" href="#custom">Custom Order</a></li>
                 </ul>
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 align-items-center">
                     <?php if(isset($_SESSION['user_id'])): ?>
+                        <a href="user/wishlist.php" class="nav-link fw-medium position-relative" title="Wishlist">
+                            <i class="fa-regular fa-heart" style="font-size:1.2rem;"></i>
+                        </a>
                         <a href="user/dashboard.php" class="btn btn-outline-custom">Dashboard</a>
                         <a href="auth/logout.php" class="btn btn-primary-custom">Logout</a>
                     <?php else: ?>

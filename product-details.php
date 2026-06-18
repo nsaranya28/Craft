@@ -192,6 +192,9 @@ if(!$product) die('Product not found');
                             </span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium" href="user/wishlist.php"><i class="fa-regular fa-heart me-1"></i>Wishlist</a>
+                    </li>
                 </ul>
                 <div class="d-flex gap-2">
                     <?php if(isset($_SESSION['user_id'])): ?>
@@ -302,7 +305,10 @@ if(!$product) die('Product not found');
                                         <button type="button" class="qty-btn" id="qty-plus"><i class="fas fa-plus"></i></button>
                                     </div>
                                 </div>
-                                <div style="flex-grow: 1;">
+                                <div style="flex-grow: 1;display:flex;gap:8px;">
+                                    <button type="button" id="wishlistBtn" class="btn py-3 d-flex align-items-center justify-content-center gap-2" style="height:52px;width:52px;border-radius:14px;border:2px solid var(--pink-200);background:white;flex-shrink:0;font-size:1.2rem;color:var(--pink-200);transition:all 0.2s;" onclick="toggleWishlist(<?php echo $product['id']; ?>)" title="Add to Wishlist">
+                                        <i id="wishlistIcon" class="fa-regular fa-heart"></i>
+                                    </button>
                                     <button type="submit" class="btn btn-primary-custom w-100 py-3 d-flex align-items-center justify-content-center gap-2" style="height: 52px; font-size: 1.05rem;">
                                         <i class="fas fa-shopping-cart"></i> Add to Cart
                                     </button>
@@ -340,6 +346,48 @@ if(!$product) die('Product not found');
             const input = document.getElementById('quantity-input');
             input.value = parseInt(input.value) + 1;
         });
+
+        // ── Wishlist Toggle ──
+        <?php if (isset($_SESSION['user_id'])): ?>
+        checkWishlist(<?= $product['id'] ?>);
+        <?php endif; ?>
+        async function checkWishlist(pid) {
+            const form = new FormData();
+            form.append('product_id', pid);
+            form.append('action', 'check');
+            try {
+                const res = await fetch('user/wishlist-action.php', { method: 'POST', body: form });
+                const data = await res.json();
+                if (data.wishlisted) {
+                    document.getElementById('wishlistIcon').className = 'fa-solid fa-heart';
+                    document.getElementById('wishlistBtn').style.color = '#e55';
+                    document.getElementById('wishlistBtn').style.borderColor = '#e55';
+                }
+            } catch(e) {}
+        }
+        async function toggleWishlist(pid) {
+            const icon = document.getElementById('wishlistIcon');
+            const btn = document.getElementById('wishlistBtn');
+            const isHearted = icon.classList.contains('fa-solid');
+            const form = new FormData();
+            form.append('product_id', pid);
+            form.append('action', isHearted ? 'remove' : 'add');
+            try {
+                const res = await fetch('user/wishlist-action.php', { method: 'POST', body: form });
+                const data = await res.json();
+                if (data.success) {
+                    if (data.action === 'added') {
+                        icon.className = 'fa-solid fa-heart';
+                        btn.style.color = '#e55';
+                        btn.style.borderColor = '#e55';
+                    } else {
+                        icon.className = 'fa-regular fa-heart';
+                        btn.style.color = 'var(--pink-200)';
+                        btn.style.borderColor = 'var(--pink-200)';
+                    }
+                }
+            } catch(e) {}
+        }
     </script>
 </body>
 </html>

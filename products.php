@@ -55,8 +55,11 @@ $categories = $catstmt->fetchAll();
                     <li class="nav-item"><a class="nav-link fw-medium" href="custom-request.php">Custom Order</a></li>
                     <li class="nav-item"><a class="nav-link fw-medium" href="index.php#about">About</a></li>
                 </ul>
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 align-items-center">
                     <?php if(isset($_SESSION['user_id'])): ?>
+                        <a href="user/wishlist.php" class="nav-link fw-medium position-relative" title="Wishlist">
+                            <i class="fa-regular fa-heart" style="font-size:1.2rem;"></i>
+                        </a>
                         <a href="user/dashboard.php" class="btn btn-outline-custom">Dashboard</a>
                         <a href="auth/logout.php" class="btn btn-primary-custom">Logout</a>
                     <?php else: ?>
@@ -91,7 +94,12 @@ $categories = $catstmt->fetchAll();
                 <?php if (count($products) > 0): ?>
                     <?php foreach($products as $product): ?>
                     <div class="col-lg-4 col-md-6">
-                        <div class="card product-card h-100">
+                        <div class="card product-card h-100 position-relative">
+                            <?php if (isset($_SESSION['user_id'])): ?>
+                            <button class="btn position-absolute top-0 end-0 m-2 p-1" style="background:rgba(255,255,255,0.85);border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:none;z-index:2;color:var(--pink-200);font-size:0.95rem;transition:all 0.2s;" onclick="event.stopPropagation();toggleWishlist(<?= $product['id'] ?>, this)" title="Wishlist">
+                                <i class="fa-regular fa-heart" id="wl-icon-<?= $product['id'] ?>"></i>
+                            </button>
+                            <?php endif; ?>
                             <img src="<?php echo htmlspecialchars($product['image']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($product['name']); ?>">
                             <div class="card-body d-flex flex-column">
                                 <h3 class="h5 font-serif mb-2 text-dark"><?php echo htmlspecialchars($product['name']); ?></h3>
@@ -137,6 +145,30 @@ $categories = $catstmt->fetchAll();
             
             fadeElements.forEach(el => observer.observe(el));
         });
+
+        <?php if (isset($_SESSION['user_id'])): ?>
+        // ── Wishlist Toggle ──
+        async function toggleWishlist(pid, btn) {
+            const icon = btn.querySelector('i');
+            const isHearted = icon.classList.contains('fa-solid');
+            const form = new FormData();
+            form.append('product_id', pid);
+            form.append('action', isHearted ? 'remove' : 'add');
+            try {
+                const res = await fetch('user/wishlist-action.php', { method: 'POST', body: form });
+                const data = await res.json();
+                if (data.success) {
+                    if (data.action === 'added') {
+                        icon.className = 'fa-solid fa-heart';
+                        btn.style.color = '#e55';
+                    } else {
+                        icon.className = 'fa-regular fa-heart';
+                        btn.style.color = 'var(--pink-200)';
+                    }
+                }
+            } catch(e) {}
+        }
+        <?php endif; ?>
     </script>
 </body>
 </html>

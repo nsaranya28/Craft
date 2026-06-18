@@ -220,7 +220,8 @@ unset($_SESSION['settings_success'], $_SESSION['settings_error']);
                     <li class="nav-item"><a class="nav-link fw-medium" href="../products.php">Shop</a></li>
                     <li class="nav-item"><a class="nav-link fw-medium" href="../custom-request.php">Custom Order</a></li>
                 </ul>
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 align-items-center">
+                    <a href="wishlist.php" class="nav-link fw-medium p-0" title="Wishlist"><i class="fa-regular fa-heart" style="font-size:1.2rem;"></i></a>
                     <a href="dashboard.php" class="btn btn-outline-custom">Dashboard</a>
                     <a href="../auth/logout.php" class="btn btn-primary-custom">Logout</a>
                 </div>
@@ -247,6 +248,11 @@ unset($_SESSION['settings_success'], $_SESSION['settings_error']);
                     <a href="?tab=requests" class="<?= $active_tab === 'requests' ? 'active' : '' ?>">
                         <i class="fas fa-paint-brush nav-icon"></i> Custom Requests
                         <?php if (count($requests)): ?><span class="badge ms-auto" style="background:var(--primary);color:white;font-size:0.7rem;"><?= count($requests) ?></span><?php endif; ?>
+                    </a>
+                </li>
+                <li>
+                    <a href="wishlist.php">
+                        <i class="fa-regular fa-heart nav-icon"></i> My Wishlist
                     </a>
                 </li>
                 <li>
