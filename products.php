@@ -35,12 +35,8 @@ $wishlisted = (isset($_SESSION['user_id'])) ? getWishlistIds($_SESSION['user_id'
 
 // Categories for filter
 $categories = $pdo->query("SELECT * FROM categories ORDER BY name")->fetchAll();
-?>
 $stmt->execute($params);
 $products = $stmt->fetchAll();
-
-$catstmt = $pdo->query("SELECT * FROM categories");
-$categories = $catstmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
