@@ -32,6 +32,9 @@ if (isset($_SESSION['user_id']) && !empty($recentViews)) {
     $recProducts = $pdo->query("SELECT id, name, image, base_price FROM products ORDER BY RAND() LIMIT 4")->fetchAll(PDO::FETCH_ASSOC);
 }
 $wishlisted = (isset($_SESSION['user_id'])) ? getWishlistIds($_SESSION['user_id']) : [];
+
+// Categories for filter
+$categories = $pdo->query("SELECT * FROM categories ORDER BY name")->fetchAll();
 ?>
 $stmt->execute($params);
 $products = $stmt->fetchAll();
