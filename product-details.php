@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'includes/db.php';
+include 'includes/cart-helper.php';
 
 $id = isset($_GET['id']) ? $_GET['id'] : die('Product not found');
 $stmt = $pdo->prepare("SELECT * FROM products WHERE id = ?");
@@ -8,6 +9,17 @@ $stmt->execute([$id]);
 $product = $stmt->fetch();
 
 if(!$product) die('Product not found');
+
+// Track recently viewed (only for logged-in users, not for AJAX quick-view)
+if (!isset($_GET['ajax']) && isset($_SESSION['user_id'])) {
+    trackRecentView($_SESSION['user_id'], $product['id']);
+}
+$recentViews = isset($_SESSION['user_id']) ? getRecentViews($_SESSION['user_id'], 4) : [];
+
+// Get recommended products (same category)
+$recStmt = $pdo->prepare("SELECT id, name, image, base_price, stock_quantity FROM products WHERE category_id = ? AND id != ? ORDER BY RAND() LIMIT 4");
+$recStmt->execute([$product['category_id'], $product['id']]);
+$recommended = $recStmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -319,6 +331,58 @@ if(!$product) die('Product not found');
                 </div>
             </div>
         </div>
+
+        <?php if (!empty($recommended)): ?>
+        <div class="mt-5 fade-up">
+            <h4 class="font-serif fw-bold mb-3">✨ You May Also Like</h4>
+            <div class="row g-3">
+                <?php foreach ($recommended as $r):
+                    $rimg = $r['image'];
+                    if ($rimg && !preg_match('/^https?:\/\//i', $rimg)) $rimg = '../' . $rimg;
+                ?>
+                <div class="col-6 col-md-3">
+                    <div class="card product-card h-100 border-pink" style="border-radius:16px;overflow:hidden;">
+                        <a href="product-details.php?id=<?= $r['id'] ?>">
+                            <div style="height:160px;overflow:hidden;background:var(--pink-50);">
+                                <img src="<?= htmlspecialchars($rimg) ?>" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--pink-200);font-size:2rem;\'><i class=\'fa-solid fa-gift\'></i></div>'">
+                            </div>
+                        </a>
+                        <div class="card-body p-2 text-center">
+                            <h6 class="small fw-bold mb-1"><?= htmlspecialchars($r['name']) ?></h6>
+                            <span class="fw-bold" style="color:var(--primary);font-size:0.85rem;">₹<?= number_format($r['base_price'], 2) ?></span>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($recentViews) && !isset($_GET['ajax'])): ?>
+        <div class="mt-4 fade-up">
+            <h4 class="font-serif fw-bold mb-3">👀 Recently Viewed</h4>
+            <div class="row g-3">
+                <?php foreach ($recentViews as $r):
+                    $rimg = $r['image'];
+                    if ($rimg && !preg_match('/^https?:\/\//i', $rimg)) $rimg = '../' . $rimg;
+                ?>
+                <div class="col-6 col-md-3">
+                    <div class="card product-card h-100 border-pink" style="border-radius:16px;overflow:hidden;">
+                        <a href="product-details.php?id=<?= $r['id'] ?>">
+                            <div style="height:160px;overflow:hidden;background:var(--pink-50);">
+                                <img src="<?= htmlspecialchars($rimg) ?>" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--pink-200);font-size:2rem;\'><i class=\'fa-solid fa-gift\'></i></div>'">
+                            </div>
+                        </a>
+                        <div class="card-body p-2 text-center">
+                            <h6 class="small fw-bold mb-1"><?= htmlspecialchars($r['name']) ?></h6>
+                            <span class="fw-bold" style="color:var(--primary);font-size:0.85rem;">₹<?= number_format($r['base_price'], 2) ?></span>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
     </main>
 
     <!-- Footer -->

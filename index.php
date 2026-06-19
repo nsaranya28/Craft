@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'includes/db.php';
+$cartCount = isset($_SESSION['cart']) ? array_sum(array_column($_SESSION['cart'], 'quantity')) : 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,12 +37,13 @@ include 'includes/db.php';
                     <li class="nav-item"><a class="nav-link fw-medium" href="products.php">Shop</a></li>
                     <li class="nav-item"><a class="nav-link fw-medium" href="#categories">Categories</a></li>
                     <li class="nav-item"><a class="nav-link fw-medium" href="#custom">Custom Order</a></li>
+                    <li class="nav-item"><a class="nav-link fw-medium" href="cart.php"><i class="fas fa-shopping-cart me-1"></i>Cart <span class="badge bg-primary text-white rounded-pill px-2" style="font-size:0.75rem;"><?= $cartCount ?></span></a></li>
+                    <?php if(isset($_SESSION['user_id'])): ?>
+                    <li class="nav-item"><a class="nav-link fw-medium" href="user/wishlist.php"><i class="fa-regular fa-heart me-1"></i>Wishlist</a></li>
+                    <?php endif; ?>
                 </ul>
                 <div class="d-flex gap-2 align-items-center">
                     <?php if(isset($_SESSION['user_id'])): ?>
-                        <a href="user/wishlist.php" class="nav-link fw-medium position-relative" title="Wishlist">
-                            <i class="fa-regular fa-heart" style="font-size:1.2rem;"></i>
-                        </a>
                         <a href="user/dashboard.php" class="btn btn-outline-custom">Dashboard</a>
                         <a href="auth/logout.php" class="btn btn-primary-custom">Logout</a>
                     <?php else: ?>

@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'includes/db.php';
+include 'includes/cart-helper.php';
 
 $category_id = isset($_GET['category']) ? $_GET['category'] : null;
 $query = "SELECT * FROM products";
@@ -12,6 +13,26 @@ if ($category_id) {
 }
 
 $stmt = $pdo->prepare($query);
+
+// Recently viewed
+$recentViews = [];
+if (isset($_SESSION['user_id'])) {
+    $recentViews = getRecentViews($_SESSION['user_id'], 4);
+}
+
+// Recommended: products in viewed categories or random
+$recProducts = [];
+if (isset($_SESSION['user_id']) && !empty($recentViews)) {
+    $viewedIds = array_column($recentViews, 'id');
+    $ph = implode(',', array_fill(0, count($viewedIds), '?'));
+    $rc = $pdo->prepare("SELECT id, name, image, base_price FROM products WHERE id NOT IN ($ph) ORDER BY RAND() LIMIT 4");
+    $rc->execute($viewedIds);
+    $recProducts = $rc->fetchAll(PDO::FETCH_ASSOC);
+} else {
+    $recProducts = $pdo->query("SELECT id, name, image, base_price FROM products ORDER BY RAND() LIMIT 4")->fetchAll(PDO::FETCH_ASSOC);
+}
+$wishlisted = (isset($_SESSION['user_id'])) ? getWishlistIds($_SESSION['user_id']) : [];
+?>
 $stmt->execute($params);
 $products = $stmt->fetchAll();
 
@@ -53,13 +74,13 @@ $categories = $catstmt->fetchAll();
                     <li class="nav-item"><a class="nav-link fw-medium" href="index.php">Home</a></li>
                     <li class="nav-item"><a class="nav-link active fw-medium" href="products.php">Shop</a></li>
                     <li class="nav-item"><a class="nav-link fw-medium" href="custom-request.php">Custom Order</a></li>
-                    <li class="nav-item"><a class="nav-link fw-medium" href="index.php#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link fw-medium" href="cart.php"><i class="fas fa-shopping-cart me-1"></i>Cart <span class="badge bg-primary text-white rounded-pill px-2" style="font-size:0.75rem;"><?= getCartCount() ?></span></a></li>
+                    <?php if(isset($_SESSION['user_id'])): ?>
+                    <li class="nav-item"><a class="nav-link fw-medium" href="user/wishlist.php"><i class="fa-regular fa-heart me-1"></i>Wishlist</a></li>
+                    <?php endif; ?>
                 </ul>
                 <div class="d-flex gap-2 align-items-center">
                     <?php if(isset($_SESSION['user_id'])): ?>
-                        <a href="user/wishlist.php" class="nav-link fw-medium position-relative" title="Wishlist">
-                            <i class="fa-regular fa-heart" style="font-size:1.2rem;"></i>
-                        </a>
                         <a href="user/dashboard.php" class="btn btn-outline-custom">Dashboard</a>
                         <a href="auth/logout.php" class="btn btn-primary-custom">Logout</a>
                     <?php else: ?>
@@ -100,13 +121,18 @@ $categories = $catstmt->fetchAll();
                                 <i class="fa-regular fa-heart" id="wl-icon-<?= $product['id'] ?>"></i>
                             </button>
                             <?php endif; ?>
-                            <img src="<?php echo htmlspecialchars($product['image']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($product['name']); ?>">
-                            <div class="card-body d-flex flex-column">
-                                <h3 class="h5 font-serif mb-2 text-dark"><?php echo htmlspecialchars($product['name']); ?></h3>
-                                <p class="text-secondary small mb-3 flex-grow-1"><?php echo htmlspecialchars(substr($product['description'], 0, 80)) . '...'; ?></p>
-                                <div class="d-flex justify-content-between align-items-center mt-auto">
-                                    <span class="price-tag">$<?php echo htmlspecialchars($product['base_price']); ?></span>
-                                    <a href="product-details.php?id=<?php echo $product['id']; ?>" class="btn btn-primary-custom btn-sm">Customize</a>
+                            <div style="height:200px;overflow:hidden;background:var(--pink-50);" onclick="location.href='product-details.php?id=<?= $product['id'] ?>'">
+                                <img src="<?php echo htmlspecialchars($product['image']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($product['name']); ?>" style="width:100%;height:100%;object-fit:cover;cursor:pointer;" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--pink-200);font-size:3rem;\'><i class=\'fa-solid fa-gift\'></i></div>'">
+                            </div>
+                            <div class="card-body d-flex flex-column p-3">
+                                <h3 class="h6 font-serif fw-bold mb-1"><?php echo htmlspecialchars($product['name']); ?></h3>
+                                <p class="text-secondary small mb-2 flex-grow-1" style="font-size:0.8rem;"><?php echo htmlspecialchars(substr($product['description'], 0, 70)) . '...'; ?></p>
+                                <div class="d-flex justify-content-between align-items-center mt-auto gap-1 flex-wrap">
+                                    <span class="fw-bold" style="color:var(--primary);font-size:1rem;">₹<?php echo number_format($product['base_price'], 2); ?></span>
+                                    <div class="d-flex gap-1">
+                                        <button class="btn btn-sm" style="background:var(--pink-50);color:var(--primary);border:none;border-radius:10px;font-size:0.75rem;" onclick="quickView(<?= $product['id'] ?>)"><i class="fas fa-eye"></i></button>
+                                        <button class="btn btn-sm" style="background:var(--primary);color:white;border:none;border-radius:10px;font-size:0.75rem;" onclick="addToCart(<?= $product['id'] ?>, '<?= htmlspecialchars(addslashes($product['name'])) ?>')"><i class="fas fa-cart-plus me-1"></i>Cart</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -119,7 +145,82 @@ $categories = $catstmt->fetchAll();
                 <?php endif; ?>
             </div>
         </div>
+
+        <?php if (!empty($recProducts)): ?>
+        <div class="mt-5 fade-up">
+            <h4 class="font-serif fw-bold mb-3">✨ You Might Love</h4>
+            <div class="row g-3">
+                <?php foreach ($recProducts as $r):
+                    $rimg = $r['image'];
+                    if ($rimg && !preg_match('/^https?:\/\//i', $rimg)) $rimg = '../' . $rimg;
+                ?>
+                <div class="col-6 col-md-3">
+                    <div class="card product-card h-100" style="border-radius:16px;overflow:hidden;">
+                        <a href="product-details.php?id=<?= $r['id'] ?>">
+                            <div style="height:150px;overflow:hidden;background:var(--pink-50);">
+                                <img src="<?= htmlspecialchars($rimg) ?>" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--pink-200);font-size:2rem;\'><i class=\'fa-solid fa-gift\'></i></div>'">
+                            </div>
+                        </a>
+                        <div class="card-body p-2 text-center">
+                            <h6 class="small fw-bold mb-1"><?= htmlspecialchars($r['name']) ?></h6>
+                            <span class="fw-bold" style="color:var(--primary);font-size:0.85rem;">₹<?= number_format($r['base_price'], 2) ?></span>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($recentViews)): ?>
+        <div class="mt-4 fade-up">
+            <h4 class="font-serif fw-bold mb-3">👀 Recently Viewed</h4>
+            <div class="row g-3">
+                <?php foreach ($recentViews as $r):
+                    $rimg = $r['image'];
+                    if ($rimg && !preg_match('/^https?:\/\//i', $rimg)) $rimg = '../' . $rimg;
+                ?>
+                <div class="col-6 col-md-3">
+                    <div class="card product-card h-100" style="border-radius:16px;overflow:hidden;">
+                        <a href="product-details.php?id=<?= $r['id'] ?>">
+                            <div style="height:150px;overflow:hidden;background:var(--pink-50);">
+                                <img src="<?= htmlspecialchars($rimg) ?>" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:var(--pink-200);font-size:2rem;\'><i class=\'fa-solid fa-gift\'></i></div>'">
+                            </div>
+                        </a>
+                        <div class="card-body p-2 text-center">
+                            <h6 class="small fw-bold mb-1"><?= htmlspecialchars($r['name']) ?></h6>
+                            <span class="fw-bold" style="color:var(--primary);font-size:0.85rem;">₹<?= number_format($r['base_price'], 2) ?></span>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
     </main>
+
+    <!-- Quick View Modal -->
+    <div class="modal fade" id="quickViewModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius:20px;border:none;">
+                <div class="modal-body p-0" id="quickViewContent">
+                    <div class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-notif" id="toast"><i class="fa-solid fa-check-circle me-2" style="color:var(--primary);"></i><span id="toastMsg">Added to cart!</span></div>
+    <style>
+        .toast-notif {
+            position:fixed;top:20px;right:20px;z-index:9999;
+            background:white;border-radius:16px;padding:1rem 1.5rem;
+            box-shadow:0 12px 40px rgba(0,0,0,0.12);border-left:4px solid var(--primary);
+            transform:translateX(120%);transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);max-width:360px;
+        }
+        .toast-notif.show { transform:translateX(0); }
+    </style>
 
     <!-- Footer -->
     <footer class="mt-5">
@@ -147,7 +248,6 @@ $categories = $catstmt->fetchAll();
         });
 
         <?php if (isset($_SESSION['user_id'])): ?>
-        // ── Wishlist Toggle ──
         async function toggleWishlist(pid, btn) {
             const icon = btn.querySelector('i');
             const isHearted = icon.classList.contains('fa-solid');
@@ -161,14 +261,54 @@ $categories = $catstmt->fetchAll();
                     if (data.action === 'added') {
                         icon.className = 'fa-solid fa-heart';
                         btn.style.color = '#e55';
+                        showToast('Added to wishlist ♡');
                     } else {
                         icon.className = 'fa-regular fa-heart';
                         btn.style.color = 'var(--pink-200)';
+                        showToast('Removed from wishlist');
                     }
                 }
             } catch(e) {}
         }
         <?php endif; ?>
+
+        // ── Add to Cart ──
+        async function addToCart(pid, name) {
+            const form = new FormData();
+            form.append('action', 'add');
+            form.append('product_id', pid);
+            form.append('quantity', 1);
+            try {
+                const res = await fetch('cart-action.php', { method: 'POST', body: form });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message || name + ' added to cart!');
+                    const badge = document.querySelector('#navbarNav .badge');
+                    if (badge) badge.textContent = data.count;
+                }
+            } catch(e) { showToast('Could not add to cart'); }
+        }
+
+        // ── Quick View ──
+        async function quickView(pid) {
+            const modal = new bootstrap.Modal(document.getElementById('quickViewModal'));
+            document.getElementById('quickViewContent').innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
+            modal.show();
+            try {
+                const res = await fetch('product-details.php?ajax=1&id=' + pid);
+                const html = await res.text();
+                document.getElementById('quickViewContent').innerHTML = html || '<div class="p-4 text-center">Product not found</div>';
+            } catch(e) {
+                document.getElementById('quickViewContent').innerHTML = '<div class="p-4 text-center">Could not load product.</div>';
+            }
+        }
+
+        // ── Toast ──
+        function showToast(msg) {
+            document.getElementById('toastMsg').textContent = msg;
+            document.getElementById('toast').classList.add('show');
+            setTimeout(() => document.getElementById('toast').classList.remove('show'), 2500);
+        }
     </script>
 </body>
 </html>

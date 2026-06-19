@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../includes/db.php';
+include '../includes/cart-helper.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
@@ -219,9 +220,10 @@ unset($_SESSION['settings_success'], $_SESSION['settings_error']);
                     <li class="nav-item"><a class="nav-link fw-medium" href="../index.php">Home</a></li>
                     <li class="nav-item"><a class="nav-link fw-medium" href="../products.php">Shop</a></li>
                     <li class="nav-item"><a class="nav-link fw-medium" href="../custom-request.php">Custom Order</a></li>
+                    <li class="nav-item"><a class="nav-link fw-medium" href="../cart.php"><i class="fas fa-shopping-cart me-1"></i>Cart <span class="badge bg-primary text-white rounded-pill px-2" style="font-size:0.75rem;"><?= getCartCount() ?></span></a></li>
+                    <li class="nav-item"><a class="nav-link fw-medium" href="wishlist.php"><i class="fa-regular fa-heart me-1"></i>Wishlist</a></li>
                 </ul>
                 <div class="d-flex gap-2 align-items-center">
-                    <a href="wishlist.php" class="nav-link fw-medium p-0" title="Wishlist"><i class="fa-regular fa-heart" style="font-size:1.2rem;"></i></a>
                     <a href="dashboard.php" class="btn btn-outline-custom">Dashboard</a>
                     <a href="../auth/logout.php" class="btn btn-primary-custom">Logout</a>
                 </div>
