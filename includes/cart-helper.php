@@ -84,14 +84,15 @@ function trackRecentView($user_id, $product_id) {
 
 function getRecentViews($user_id, $limit = 6) {
     global $pdo;
+    $limit = (int)$limit;
     $stmt = $pdo->prepare("
         SELECT p.id, p.name, p.image, p.base_price, p.stock_quantity
         FROM recently_viewed rv
         JOIN products p ON rv.product_id = p.id
         WHERE rv.user_id = ?
         ORDER BY rv.viewed_at DESC
-        LIMIT ?
+        LIMIT $limit
     ");
-    $stmt->execute([$user_id, $limit]);
+    $stmt->execute([$user_id]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
